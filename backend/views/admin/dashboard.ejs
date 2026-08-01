@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'dashboard', username: username }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Overview of your website content and enquiries</p>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num"><%= stats.catalogCategories %></div><div class="lbl">Catalog categories</div></div>
+      <div class="stat-card"><div class="num"><%= stats.enquiries %></div><div class="lbl">Total enquiries</div></div>
+      <div class="stat-card accent"><div class="num"><%= stats.newEnquiries %></div><div class="lbl">New enquiries</div></div>
+      <div class="stat-card accent"><div class="num"><%= stats.unread %></div><div class="lbl">Unread messages</div></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:26px;">
+      <div class="panel-head">Recent catalog enquiries</div>
+      <% if (recentEnquiries.length === 0) { %>
+        <div class="empty-state">No enquiries yet — leads from the Service Catalog + Package flow will show up here.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Name</th><th>Selection</th><th>Price</th><th>Status</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+          <% recentEnquiries.forEach(e => { %>
+            <tr>
+              <td><%= e.full_name %></td>
+              <td style="font-size:13px;"><%= e.technology_name || '—' %> <% if (e.package_name) { %><br><span style="color:var(--gray);"><%= e.package_name %></span><% } %></td>
+              <td><%= e.price ? '₹' + Number(e.price).toLocaleString('en-IN') : '—' %></td>
+              <td><span class="tag-pill"><%= e.status %></span></td>
+              <td><%= e.created_at %></td>
+              <td><a href="/admin/enquiries" class="btn secondary" style="padding:6px 12px; font-size:12.5px;">View</a></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">Recent contact messages</div>
+      <% if (recentMessages.length === 0) { %>
+        <div class="empty-state">No messages yet — enquiries from the contact form will show up here.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Service</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+          <% recentMessages.forEach(m => { %>
+            <tr>
+              <td><% if (!m.is_read) { %><span class="unread-dot"></span><% } %><%= m.name %></td>
+              <td><%= m.email %></td>
+              <td><%= m.service || '—' %></td>
+              <td><%= m.created_at %></td>
+              <td><a href="/admin/messages" class="btn secondary" style="padding:6px 12px; font-size:12.5px;">View</a></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

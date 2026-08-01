@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= technology ? 'Edit' : 'Add' %> Service — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= technology ? 'Edit Service' : 'Add Service' %></h1>
+        <p>Inside <strong><%= category.name %></strong> — shown as a card on the category's catalog page.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= technology ? '/admin/catalog/' + category.id + '/technologies/' + technology.id : '/admin/catalog/' + category.id + '/technologies' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Service / technology name (e.g. "Shopify Store")</label>
+          <input type="text" name="name" value="<%= technology ? technology.name : '' %>" required>
+          <% if (technology) { %>
+            <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Page URL: <code>/services/<%= category.slug %>/<%= technology.slug %></code></div>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Icon (optional — a single emoji, defaults to the category icon)</label>
+          <input type="text" name="icon" value="<%= technology ? technology.icon : '' %>" maxlength="4">
+        </div>
+        <div class="field">
+          <label>Short description (shown on the card)</label>
+          <textarea name="description" rows="3"><%= technology ? technology.description : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Long description (shown on the service's own page, if you build one)</label>
+          <textarea name="long_description" rows="5"><%= technology ? technology.long_description : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Features (one per line)</label>
+          <textarea name="features" rows="5"><%= technology ? JSON.parse(technology.features || '[]').join('\n') : '' %></textarea>
+        </div>
+
+        <h3 style="margin:20px 0 12px;">Images</h3>
+        <div class="field">
+          <label>Cover image (desktop)</label>
+          <% if (technology && technology.cover_image) { %><div style="margin-bottom:8px;"><img src="<%= technology.cover_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="cover_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Mobile image</label>
+          <% if (technology && technology.mobile_image) { %><div style="margin-bottom:8px;"><img src="<%= technology.mobile_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="mobile_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Gallery images (multiple — uploading new ones replaces the current set)</label>
+          <% if (technology && JSON.parse(technology.gallery_images || '[]').length) { %>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+              <% JSON.parse(technology.gallery_images).forEach(function(img) { %>
+                <img src="<%= img %>" style="height:70px; border-radius:6px; border:1px solid var(--line);">
+              <% }) %>
+            </div>
+          <% } %>
+          <input type="file" name="gallery_images" accept="image/*" multiple>
+        </div>
+        <div class="field">
+          <label>Image alt text</label>
+          <input type="text" name="image_alt" value="<%= technology ? technology.image_alt : '' %>">
+        </div>
+
+        <h3 style="margin:20px 0 12px;">Buttons</h3>
+        <div class="field">
+          <label>CTA button text (e.g. "Get Started")</label>
+          <input type="text" name="cta_text" value="<%= technology ? technology.cta_text : '' %>">
+        </div>
+        <div class="field">
+          <label>CTA button link</label>
+          <input type="text" name="cta_link" value="<%= technology ? technology.cta_link : '' %>" placeholder="contact.html">
+        </div>
+        <div class="field">
+          <label>Buy button text (e.g. "Buy Now") — package selection already has its own link</label>
+          <input type="text" name="buy_button_text" value="<%= technology ? technology.buy_button_text : '' %>">
+        </div>
+        <div class="field">
+          <label>WhatsApp pre-filled message for this service (optional)</label>
+          <input type="text" name="whatsapp_message" value="<%= technology ? technology.whatsapp_message : '' %>" placeholder="Hi, I'm interested in your Shopify service">
+        </div>
+
+        <h3 style="margin:20px 0 12px;">Status &amp; SEO</h3>
+        <div class="field">
+          <label>Status</label>
+          <select name="status">
+            <option value="active" <%= !technology || technology.status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="inactive" <%= technology && technology.status === 'inactive' ? 'selected' : '' %>>Inactive (hidden from the site)</option>
+          </select>
+        </div>
+        <div class="field"><label>SEO Title</label><input type="text" name="seo_title" value="<%= technology ? technology.seo_title : '' %>"></div>
+        <div class="field"><label>SEO Description</label><textarea name="seo_description" rows="2"><%= technology ? technology.seo_description : '' %></textarea></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= technology ? 'Save Changes' : 'Add Service' %></button>
+          <a href="/admin/catalog/<%= category.id %>/technologies" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

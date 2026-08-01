@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mishty Web — Website Development, SEO & Digital Marketing Agency in Khargone, MP</title>
+<meta name="description" content="Mishty Web is a full-service digital agency in Khargone, Madhya Pradesh — custom website development, WordPress, Shopify, SEO, Google & Meta Ads, and branding, all built in-house.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <span id="navExtraLinks"></span>
+    </div>
+    <a href="contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="hero" id="heroSection">
+  <div class="wrap" id="heroWrap">
+    <div id="heroTextCol">
+      <div class="hero-badge" id="heroBadge"><span class="pip"></span> <span id="heroBadgeText">Full-service digital partner</span></div>
+      <h1 id="heroHeading">Digital marketing & web development that <span class="hl" id="heroHighlight">grows your business</span></h1>
+      <p class="sub" id="heroDescription">Mishty Web is a full-service digital agency based in Khargone — we build websites, run ad campaigns, and design brands for companies across travel, retail, recruitment, and manufacturing.</p>
+      <div class="hero-ctas">
+        <a href="contact.html" class="btn-primary" id="heroBtn1">Get Free Consultation →</a>
+        <a href="gallery.html" class="btn-outline" id="heroBtn2">View Our Work</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img id="heroFloatingImage" src="" alt="" style="display:none; max-width:100%; border-radius:14px; margin-bottom:16px;">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="heroStat1Num">4<span>+</span></div>
+          <div class="stat-label" id="heroStat1Label">Industries served</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="heroStat2Num">100<span>%</span></div>
+          <div class="stat-label" id="heroStat2Label">In-house builds</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="heroStat3Num">2<span>-in-1</span></div>
+          <div class="stat-label" id="heroStat3Label">Web + marketing under one roof</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="heroStat4Num">1:1</div>
+          <div class="stat-label" id="heroStat4Label">Direct developer access</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="heroDots" style="display:none; justify-content:center; gap:8px; margin-top:18px; position:relative; z-index:2;"></div>
+</section>
+
+<div class="trust-strip">
+  <div class="wrap">
+    <span class="trust-label">Trusted by</span>
+    <div class="trust-logos" id="trustLogos">
+      <span>Vikash Travels</span>
+      <span>Pahal</span>
+      <span>JobPortal Pro</span>
+      <span>Balaji Enterprise</span>
+    </div>
+  </div>
+</div>
+<script>
+  fetch('/api/client-logos')
+    .then(r => r.json())
+    .then(logos => {
+      if (!logos.length) return;
+      document.getElementById('trustLogos').innerHTML = logos.map(l =>
+        `<img src="${l.logo_url}" alt="${l.name}" style="height:32px; max-width:120px; object-fit:contain; opacity:0.75;">`
+      ).join('');
+    })
+    .catch(() => {});
+</script>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What we do</span>
+      <h2>A complete digital growth stack, under one roof</h2>
+      <p>From the website itself to the marketing that drives traffic to it — no handoffs between vendors.</p>
+    </div>
+    <div class="services-grid" id="servicesGrid">
+      <div class="empty-state" style="padding:20px; color:var(--gray); grid-column:1/-1; text-align:center;">Loading services…</div>
+    </div>
+    <div style="text-align:center; margin-top:44px;">
+      <a href="services.html" class="btn-outline">See All Services →</a>
+    </div>
+    <script>
+      fetch('/api/catalog')
+        .then(r => r.json())
+        .then(categories => {
+          const grid = document.getElementById('servicesGrid');
+          if (!categories.length) { grid.innerHTML = ''; return; }
+          grid.innerHTML = categories.map(cat => {
+            const options = (cat.technologies || []).slice(0, 4);
+            return `
+            <div class="service-card">
+              <div class="service-icon" style="font-size:22px;">${cat.icon || '🧩'}</div>
+              <h3>${cat.name}</h3>
+              <p>${cat.description || ''}</p>
+              ${options.length ? `
+                <div class="service-card-options">
+                  ${options.map(t => `<a class="option-chip" href="/services/${encodeURIComponent(cat.slug)}/${encodeURIComponent(t.slug)}">${t.name}</a>`).join('')}
+                </div>
+              ` : ''}
+              <div style="margin-top:14px;">
+                <a href="/services/${encodeURIComponent(cat.slug)}" style="font-weight:700; color:var(--blue); text-decoration:none; font-size:13.5px;">Learn more →</a>
+              </div>
+            </div>
+          `;
+          }).join('');
+        })
+        .catch(() => {});
+    </script>
+  </div>
+</section>
+
+<section class="section case-section" id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Case studies</span>
+      <h2>Results across four different industries</h2>
+      <p>Every business is built from scratch, not templated — here's what that looked like in practice.</p>
+    </div>
+    <div class="case-grid">
+      <div class="case-card">
+        <div class="case-top"><span class="case-industry">Travel & Booking</span></div>
+        <h3>Vikash Travels Premium</h3>
+        <p>Built a full booking platform with live fare calculation and city autocomplete, shipped in three tiers — Basic, Business, Premium — so the client could scale up as the business grew.</p>
+        <div class="case-results">
+          <div><div class="case-result-num">3</div><div class="case-result-label">Deployable tiers</div></div>
+          <div><div class="case-result-num">Live</div><div class="case-result-label">Fare calculation engine</div></div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-top"><span class="case-industry">Personal Care</span></div>
+        <h3>Pahal</h3>
+        <p>Designed a brand website for a shampoo & conditioner line — hero, testimonials, trust badges, and product imagery built to turn browsers into first-time buyers.</p>
+        <div class="case-results">
+          <div><div class="case-result-num">6+</div><div class="case-result-label">Custom sections built</div></div>
+          <div><div class="case-result-num">100%</div><div class="case-result-label">Conversion-focused design</div></div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-top"><span class="case-industry">Recruitment</span></div>
+        <h3>JobPortal Pro Enterprise</h3>
+        <p>Built a 60+ page recruitment platform spanning public listings, candidate and employer dashboards, and a full admin backend — built for enterprise-scale hiring.</p>
+        <div class="case-results">
+          <div><div class="case-result-num">60+</div><div class="case-result-label">Pages across 4 user roles</div></div>
+          <div><div class="case-result-num">Full</div><div class="case-result-label">Admin backend</div></div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-top"><span class="case-industry">Manufacturing</span></div>
+        <h3>Balaji Enterprise</h3>
+        <p>Brought a traditional cotton bati & diya wicks manufacturer online — digital presence, branding, and a modern quotation system to match.</p>
+        <div class="case-results">
+          <div><div class="case-result-num">New</div><div class="case-result-label">Digital presence</div></div>
+          <div><div class="case-result-num">1</div><div class="case-result-label">Unified brand system</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:44px;">
+      <a href="gallery.html" class="btn-outline">View Full Gallery →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why Mishty Web</span>
+      <h2>A small studio built for direct, honest delivery</h2>
+      <p>No account managers, no bundled packages — just clear scope and hands-on execution.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-num">1</div>
+        <div><h3>You talk to the developer</h3><p>Every project is built and owned hands-on, so decisions get made fast with no relay in between.</p></div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">2</div>
+        <div><h3>Scope before payment</h3><p>Clear quotations and timelines up front — you know exactly what you're paying for before work starts.</p></div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">3</div>
+        <div><h3>Web + marketing, one team</h3><p>The people who build your site are the same people running your ad campaigns — no gaps between the two.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Client feedback</span>
+      <h2>What clients say after working with us</h2>
+    </div>
+    <div id="testimonialsGrid" class="services-grid">
+      <div class="empty-state" style="padding:20px; color:var(--gray); grid-column:1/-1; text-align:center;">Loading testimonials…</div>
+    </div>
+  </div>
+</section>
+<script>
+  fetch('/api/testimonials')
+    .then(r => r.json())
+    .then(list => {
+      const grid = document.getElementById('testimonialsGrid');
+      if (!list.length) { grid.innerHTML = ''; return; }
+      grid.innerHTML = list.map(t => `
+        <div class="service-card">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            ${t.avatar_url
+              ? `<img src="${t.avatar_url}" alt="${t.client_name}" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">`
+              : `<span style="display:inline-flex; width:48px; height:48px; align-items:center; justify-content:center; background:var(--sky); border-radius:50%; color:var(--blue); font-weight:800;">${t.client_name.charAt(0)}</span>`
+            }
+            <div>
+              <div style="font-weight:700; color:var(--navy); font-size:14.5px;">${t.client_name}</div>
+              <div style="color:var(--gray); font-size:12.5px;">${t.client_role || ''}</div>
+            </div>
+          </div>
+          <div style="color:var(--orange); margin-bottom:10px; letter-spacing:2px;">${'★'.repeat(t.rating)}${'☆'.repeat(5 - t.rating)}</div>
+          <p style="font-style:italic;">"${t.quote}"</p>
+        </div>
+      `).join('');
+    })
+    .catch(() => {});
+</script>
+
+<section class="section" style="background:var(--sky);" id="lead-forms">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Free, no-obligation</span>
+      <h2>Not ready to talk yet? Start here instead</h2>
+      <p>Two quick ways to get value before you ever speak to us.</p>
+    </div>
+    <div class="sd-grid" style="margin-top:20px;">
+      <div class="sd-card">
+        <h2 style="font-size:19px;">🔍 Free SEO Audit</h2>
+        <p style="color:var(--gray); font-size:14px; margin-bottom:18px;">Share your website and we'll send back a quick report on what's holding your rankings back.</p>
+        <form id="seoAuditForm">
+          <div class="field"><label>Your name</label><input type="text" name="name" required></div>
+          <div class="field"><label>Website URL</label><input type="url" name="website" placeholder="https://yourwebsite.com" required></div>
+          <div class="field"><label>Phone or email</label><input type="text" name="contact" required></div>
+          <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">Request Free SEO Audit</button>
+          <p class="form-status" style="display:none; margin-top:12px; color:#2BB673; font-size:13.5px; font-weight:600;">Thanks! We'll send your audit shortly.</p>
+        </form>
+      </div>
+      <div class="sd-card">
+        <h2 style="font-size:19px;">🖥 Free Demo Request</h2>
+        <p style="color:var(--gray); font-size:14px; margin-bottom:18px;">Want to see how we'd approach your project? Request a free, no-pressure demo call.</p>
+        <form id="demoRequestForm">
+          <div class="field"><label>Your name</label><input type="text" name="name" required></div>
+          <div class="field"><label>Business / project type</label><input type="text" name="business" placeholder="e.g. Retail store, travel agency" required></div>
+          <div class="field"><label>Phone or email</label><input type="text" name="contact" required></div>
+          <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">Request Free Demo</button>
+          <p class="form-status" style="display:none; margin-top:12px; color:#2BB673; font-size:13.5px; font-weight:600;">Thanks! We'll be in touch to schedule your demo.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  function isEmail(v){ return v.includes('@'); }
+  function wireLeadForm(formId, buildPayload){
+    const form = document.getElementById(formId);
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const payload = buildPayload(new FormData(form));
+      try {
+        const res = await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.ok) {
+          form.reset();
+          form.querySelector('.form-status').style.display = 'block';
+        }
+      } catch (err) {}
+    });
+  }
+  wireLeadForm('seoAuditForm', fd => ({
+    name: fd.get('name'),
+    email: isEmail(fd.get('contact')) ? fd.get('contact') : 'not-provided@mishtyweb.com',
+    phone: isEmail(fd.get('contact')) ? '' : fd.get('contact'),
+    service: 'Free SEO Audit',
+    message: 'Website to audit: ' + fd.get('website')
+  }));
+  wireLeadForm('demoRequestForm', fd => ({
+    name: fd.get('name'),
+    email: isEmail(fd.get('contact')) ? fd.get('contact') : 'not-provided@mishtyweb.com',
+    phone: isEmail(fd.get('contact')) ? '' : fd.get('contact'),
+    service: 'Free Demo Request',
+    message: 'Business / project type: ' + fd.get('business')
+  }));
+</script>
+
+<section class="faq-section" id="faqSection" style="display:none; padding:60px 0;">
+  <div class="wrap">
+    <h2 style="text-align:center; margin-bottom:8px;">Frequently Asked Questions</h2>
+    <p style="text-align:center; color:var(--gray); margin-bottom:32px;">Answers to the questions we hear most often</p>
+    <div id="faqList" style="max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:10px;"></div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="wrap">
+    <h2>Ready to grow your business online?</h2>
+    <p>Get a free consultation and digital audit — no obligation.</p>
+    <div class="hero-ctas">
+      <a href="contact.html" class="btn-primary">Contact Us →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">Blog</a>
+        <a href="contact.html">Contact</a>
+        <span id="footerExtraLinks"></span>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="services.html">Website Development</a>
+        <a href="services.html">Digital Marketing</a>
+        <a href="services.html">SEO</a>
+        <a href="services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="site-settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQs — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'faqs' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>FAQs</h1>
+        <p>Manage the frequently asked questions shown on the website</p>
+      </div>
+      <a href="/admin/faqs/new" class="btn">+ Add FAQ</a>
+    </div>
+
+    <div class="panel">
+      <% if (faqs.length === 0) { %>
+        <div class="empty-state">No FAQs yet. Click "Add FAQ" to create one.</div>
+      <% } else { %>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px;">
+          <input type="text" id="adminSearch" placeholder="Search by question, category…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+          <span style="color:var(--gray); font-size:12.5px;">Drag rows by the ⠿ handle to reorder</span>
+        </div>
+        <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+          <span><span data-bulk-count>0</span> selected</span>
+          <button type="button" class="btn secondary" data-bulk-action="activate" style="padding:5px 12px; font-size:12.5px;">Activate Selected</button>
+          <button type="button" class="btn secondary" data-bulk-action="deactivate" style="padding:5px 12px; font-size:12.5px;">Deactivate Selected</button>
+          <button type="button" class="btn danger" data-bulk-action="delete" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th style="width:26px;"><input type="checkbox" id="selectAll"></th><th></th><th>Category</th><th>Question</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+          <% faqs.forEach(f => { %>
+            <tr data-row-id="<%= f.id %>">
+              <td><input type="checkbox" data-row-id="<%= f.id %>"></td>
+              <td class="drag-handle" style="cursor:grab; color:var(--gray);">⠿</td>
+              <td><span class="tag-pill"><%= f.category %></span></td>
+              <td style="max-width:420px;"><%= f.question %></td>
+              <td>
+                <a href="/admin/faqs/<%= f.id %>/edit" style="text-decoration:none;">
+                  <span style="font-size:12px; color:<%= f.is_active ? 'var(--green,#1a7f37)' : 'var(--gray)' %>;"><%= f.is_active ? '✅ Active' : '⏸ Inactive' %></span>
+                </a>
+              </td>
+              <td class="row-actions">
+                <a href="/admin/faqs/<%= f.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/faqs/<%= f.id %>/duplicate" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Duplicate</button>
+                </form>
+                <form action="/admin/faqs/<%= f.id %>/delete" method="POST" onsubmit="return confirm('Delete this FAQ?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+<script src="/admin/public/admin-list.js"></script>
+<script>
+  AdminList.init({
+    searchInputId: 'adminSearch',
+    tableId: 'adminTable',
+    selectAllId: 'selectAll',
+    bulkBarId: 'bulkBar',
+    bulkUrl: '/admin/faqs/bulk',
+    reorderUrl: '/admin/faqs/reorder',
+    csrfToken: '<%= csrfToken %>'
+  });
+</script>
+</body>
+</html>

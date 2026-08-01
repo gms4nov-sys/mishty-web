@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= category.name %> Services — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= category.icon %> <%= category.name %></h1>
+        <p>Services / technologies inside this category. Each one holds its own Basic / Business / Premium packages.</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <a href="/admin/catalog" class="btn secondary">← All Categories</a>
+        <a href="/admin/catalog/<%= category.id %>/technologies/new" class="btn">+ Add Service</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <% if (technologies.length === 0) { %>
+        <div class="empty-state">No services yet under this category. Click "Add Service" to create one.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Service</th><th>Description</th><th>Packages</th><th>URL</th><th></th></tr></thead>
+          <tbody>
+          <% technologies.forEach(t => { %>
+            <tr>
+              <td><%= t.name %></td>
+              <td style="color:var(--gray); font-size:13px; max-width:280px;"><%= t.description %></td>
+              <td><%= t.pkg_count %> / 3</td>
+              <td style="color:var(--gray); font-size:12.5px;"><code>/services/<%= category.slug %>/<%= t.slug %></code></td>
+              <td class="row-actions">
+                <a href="/admin/catalog/<%= category.id %>/technologies/<%= t.id %>/packages" class="btn secondary">Manage Packages</a>
+                <a href="/admin/catalog/<%= category.id %>/technologies/<%= t.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/catalog/<%= category.id %>/technologies/<%= t.id %>/delete" method="POST" onsubmit="return confirm('Delete this service and its packages?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

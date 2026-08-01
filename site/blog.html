@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Web Development & Digital Marketing Tips | Mishty Web</title>
+<meta name="description" content="Practical, no-jargon articles on websites, SEO, and digital marketing for small and growing businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="blog.html" class="active">Blog</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <a href="contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Blog</span>
+    <h1>Notes on web development & digital marketing</h1>
+    <p>Practical, no-jargon advice for local businesses trying to grow online.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div id="blogCategoryFilters" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:32px;"></div>
+    <div class="blog-grid" id="blogGrid">
+      <div class="empty-state" style="padding:40px; text-align:center; color:var(--gray);">Loading posts…</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  let allPosts = [];
+  let activeTag = 'All';
+
+  function renderPosts() {
+    const grid = document.getElementById('blogGrid');
+    const posts = activeTag === 'All' ? allPosts : allPosts.filter(p => p.tag === activeTag);
+    if (!posts.length) { grid.innerHTML = '<div class="empty-state">No posts in this category yet.</div>'; return; }
+    grid.innerHTML = posts.map(p => `
+      <a class="blog-card" href="/blog/${encodeURIComponent(p.slug)}" style="text-decoration:none; color:inherit; display:block;">
+        <div class="blog-thumb">${p.featured_image ? `<img src="${p.featured_image}" alt="${p.title}" loading="lazy">` : p.thumb_label}</div>
+        <div class="blog-body">
+          <span class="blog-tag">${p.tag}</span>
+          <h3>${p.title}</h3>
+          <p>${p.excerpt}</p>
+          <div class="blog-meta"><span>${p.author}</span><span>${p.read_time}</span></div>
+        </div>
+      </a>
+    `).join('');
+  }
+
+  function renderFilters() {
+    const tags = ['All', ...new Set(allPosts.map(p => p.tag))];
+    document.getElementById('blogCategoryFilters').innerHTML = tags.map(t => `
+      <button type="button" class="option-chip filter-btn" data-tag="${t}" style="${t === activeTag ? 'background:var(--blue); color:#fff;' : ''}">${t}</button>
+    `).join('');
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeTag = btn.getAttribute('data-tag');
+        renderFilters();
+        renderPosts();
+      });
+    });
+  }
+
+  fetch('/api/blog')
+    .then(r => r.json())
+    .then(posts => {
+      allPosts = posts;
+      if (!posts.length) { document.getElementById('blogGrid').innerHTML = '<div class="empty-state">No posts yet.</div>'; return; }
+      renderFilters();
+      renderPosts();
+    })
+    .catch(() => {
+      document.getElementById('blogGrid').innerHTML = '<div class="empty-state">Could not load posts right now.</div>';
+    });
+</script>
+
+<section class="cta-banner">
+  <div class="wrap">
+    <h2>Have a topic you want us to cover?</h2>
+    <p>Send us your question — we might turn it into the next post.</p>
+    <div class="hero-ctas">
+      <a href="contact.html" class="btn-primary">Suggest a Topic →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">Blog</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="services.html">Website Development</a>
+        <a href="services.html">Digital Marketing</a>
+        <a href="services.html">SEO</a>
+        <a href="services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="site-settings.js"></script>
+</body>
+</html>

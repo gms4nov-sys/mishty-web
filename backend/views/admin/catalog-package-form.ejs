@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= pkg ? 'Edit' : 'Add' %> Package — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= pkg ? 'Edit Package' : 'Add Package' %></h1>
+        <p><%= category.name %> → <%= technology.name %></p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= pkg ? '/admin/catalog/' + category.id + '/technologies/' + technology.id + '/packages/' + pkg.id : '/admin/catalog/' + category.id + '/technologies/' + technology.id + '/packages' %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Tier</label>
+          <% if (pkg) { %>
+            <input type="text" value="<%= pkg.tier.charAt(0).toUpperCase() + pkg.tier.slice(1) %>" disabled>
+          <% } else { %>
+            <select name="tier" required>
+              <option value="basic" <%= usedTiers.includes('basic') ? 'disabled' : '' %>>Basic</option>
+              <option value="business" <%= usedTiers.includes('business') ? 'disabled' : '' %>>Business</option>
+              <option value="premium" <%= usedTiers.includes('premium') ? 'disabled' : '' %>>Premium</option>
+            </select>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Package name (shown to customers, e.g. "Business Shopify")</label>
+          <input type="text" name="name" value="<%= pkg ? pkg.name : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Price (in ₹, numbers only)</label>
+          <input type="number" name="price" value="<%= pkg ? pkg.price : '' %>" required min="0">
+        </div>
+        <div class="field">
+          <label>Discount price (optional — shown crossed-out original + this lower price)</label>
+          <input type="number" name="discount_price" value="<%= pkg && pkg.discount_price ? pkg.discount_price : '' %>" min="0" placeholder="Leave blank for no discount">
+        </div>
+        <div class="field">
+          <label>Price suffix (e.g. "one-time", "/month", "/month + ad spend")</label>
+          <input type="text" name="price_suffix" value="<%= pkg ? pkg.price_suffix : 'one-time' %>">
+        </div>
+        <div class="field">
+          <label>Delivery time (e.g. "10–14 days")</label>
+          <input type="text" name="delivery_time" value="<%= pkg ? pkg.delivery_time : '' %>">
+        </div>
+        <div class="field">
+          <label>Support duration (e.g. "30 days free support")</label>
+          <input type="text" name="support_duration" value="<%= pkg ? pkg.support_duration : '' %>">
+        </div>
+        <div class="field">
+          <label>Revisions (e.g. "3 revision rounds")</label>
+          <input type="text" name="revisions" value="<%= pkg ? pkg.revisions : '' %>">
+        </div>
+        <div class="field">
+          <label>Features (one per line)</label>
+          <textarea name="features" rows="6"><%= pkg ? JSON.parse(pkg.features).join('\n') : '' %></textarea>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="is_popular" id="is_popular" value="1" <%= pkg && pkg.is_popular ? 'checked' : '' %>>
+          <label for="is_popular" style="margin:0;">Show a ribbon badge on this package</label>
+        </div>
+        <div class="field">
+          <label>Ribbon text (defaults to "Most Popular" if the box above is checked and this is left blank)</label>
+          <input type="text" name="ribbon_text" value="<%= pkg ? pkg.ribbon_text : '' %>" placeholder="Most Popular / Best Value / Limited Offer">
+        </div>
+        <div class="field">
+          <label>Button text (defaults to "Select Plan →")</label>
+          <input type="text" name="button_text" value="<%= pkg ? pkg.button_text : '' %>">
+        </div>
+        <div class="field">
+          <label>Button link (defaults to this package's own enquiry link — only set this to override with a custom URL)</label>
+          <input type="text" name="button_link" value="<%= pkg ? pkg.button_link : '' %>">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= pkg ? 'Save Changes' : 'Add Package' %></button>
+          <a href="/admin/catalog/<%= category.id %>/technologies/<%= technology.id %>/packages" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

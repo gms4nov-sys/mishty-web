@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Users — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'users' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Admin Users</h1>
+        <p><strong>Admin</strong> accounts have full access, including Settings and this page. <strong>Editor</strong> accounts can manage all website content (Hero Slider, Services, Gallery, Blog, etc.) but not Settings or other Admin Users.</p>
+      </div>
+    </div>
+
+    <% if (error) { %><div class="error-msg" style="max-width:720px;"><%= error %></div><% } %>
+    <% if (success) { %><div class="success-msg" style="max-width:720px;"><%= success %></div><% } %>
+
+    <div class="form-card" style="max-width:520px;">
+      <h3 style="margin:0 0 12px;">Add a new user</h3>
+      <form action="/admin/users" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" required>
+        </div>
+        <div class="field">
+          <label>Password (min. 8 characters)</label>
+          <input type="password" name="password" minlength="8" required>
+        </div>
+        <div class="field">
+          <label>Role</label>
+          <select name="role">
+            <option value="editor">Editor — content only</option>
+            <option value="admin">Admin — full access</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Add User</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead><tr><th>Username</th><th>Role</th><th></th></tr></thead>
+        <tbody>
+        <% users.forEach(u => { %>
+          <tr>
+            <td><%= u.username %><% if (u.id === currentAdminId) { %> <span style="color:var(--gray); font-size:12px;">(you)</span><% } %></td>
+            <td>
+              <form action="/admin/users/<%= u.id %>/role" method="POST" style="display:flex; gap:8px; align-items:center;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <select name="role" onchange="this.form.submit()">
+                  <option value="editor" <%= u.role === 'editor' ? 'selected' : '' %>>Editor</option>
+                  <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                </select>
+              </form>
+            </td>
+            <td class="row-actions">
+              <form action="/admin/users/<%= u.id %>/delete" method="POST" onsubmit="return confirm('Delete this user?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= post ? 'Edit' : 'New' %> Post — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'blog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= post ? 'Edit Post' : 'New Post' %></h1>
+        <p>Shown on the blog page</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= post ? '/admin/blog/' + post.id : '/admin/blog' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Category tag (e.g. Web Development, Digital Marketing)</label>
+          <input type="text" name="tag" value="<%= post ? post.tag : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Title</label>
+          <input type="text" name="title" value="<%= post ? post.title : '' %>" required>
+        </div>
+        <div class="field">
+          <label>URL slug (leave blank to auto-generate from the title)</label>
+          <input type="text" name="slug" value="<%= post ? post.slug : '' %>" placeholder="e.g. why-your-business-needs-a-website">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Post URL: <code>/blog/<%= post ? post.slug : 'your-slug-here' %></code> — use lowercase words separated by hyphens, and try to include your main keyword.</div>
+        </div>
+        <div class="field">
+          <label>Excerpt (short summary shown on the blog listing page)</label>
+          <textarea name="excerpt" rows="3" required><%= post ? post.excerpt : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Full post content (shown on the individual blog post page). Leave a blank line between paragraphs — no HTML needed.</label>
+          <textarea name="content" rows="14"><%= post ? post.content : '' %></textarea>
+        </div>
+
+        <div class="field">
+          <label>Featured image (shown on the blog listing card and at the top of the post)</label>
+          <% if (post && post.featured_image) { %>
+            <img src="<%= post.featured_image %>" alt="Current featured image" style="max-width:220px; border-radius:8px; display:block; margin-bottom:10px; border:1px solid var(--line);">
+          <% } %>
+          <input type="file" name="featured_image" accept=".jpg,.jpeg,.png,.gif,.webp,.svg">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">JPG, PNG, GIF, WEBP, or SVG — under 5MB. <% if (post && post.featured_image) { %>Leave empty to keep the current image.<% } %> Recommended size: at least 1200×630px so it looks sharp when shared on social media.</div>
+        </div>
+
+        <div class="field">
+          <label>Thumbnail label (used if no featured image is uploaded)</label>
+          <input type="text" name="thumb_label" value="<%= post ? post.thumb_label : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Read time (e.g. "5 min read")</label>
+          <input type="text" name="read_time" value="<%= post ? post.read_time : '5 min read' %>">
+        </div>
+        <div class="field">
+          <label>Author</label>
+          <input type="text" name="author" value="<%= post ? post.author : 'Mishty Web' %>">
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="published" name="published" value="1" <%= (!post || post.published) ? 'checked' : '' %>>
+          <label for="published" style="margin:0;">Published (visible on the live site)</label>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--line); margin:28px 0;">
+        <h3 style="margin-bottom:4px;">🔍 SEO Settings</h3>
+        <p style="color:var(--gray); font-size:13px; margin-bottom:18px;">Controls how this post appears in Google search results and when shared on WhatsApp/Facebook/Twitter. All optional — if left blank, the Title and Excerpt above are used instead.</p>
+
+        <div class="field">
+          <label>SEO title (shown as the blue clickable link in Google search results)</label>
+          <input type="text" name="meta_title" value="<%= post ? post.meta_title : '' %>" maxlength="70" placeholder="<%= post ? post.title : 'Defaults to the post title' %>">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Keep it under ~60 characters so Google doesn't cut it off.</div>
+        </div>
+        <div class="field">
+          <label>Meta description (the grey summary text shown under the title in Google)</label>
+          <textarea name="meta_description" rows="3" maxlength="160" placeholder="<%= post ? post.excerpt : 'Defaults to the excerpt above' %>"><%= post ? post.meta_description : '' %></textarea>
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Keep it under ~155 characters. Write it like an ad — give people a reason to click.</div>
+        </div>
+        <div class="field">
+          <label>Meta keywords (optional, comma-separated)</label>
+          <input type="text" name="meta_keywords" value="<%= post ? post.meta_keywords : '' %>" placeholder="e.g. website design, small business website, Khargone web developer">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Google mostly ignores this today, but some other search tools still use it — a few relevant phrases are enough.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= post ? 'Save Changes' : 'Publish Post' %></button>
+          <a href="/admin/blog" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

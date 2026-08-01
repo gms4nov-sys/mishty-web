@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'messages' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Messages</h1>
+        <p>Enquiries submitted through your website's contact form</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <% if (messages.length === 0) { %>
+        <div class="empty-state">No messages yet.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>From</th><th>Contact</th><th>Service</th><th>Message</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+          <% messages.forEach(m => { %>
+            <tr>
+              <td><% if (!m.is_read) { %><span class="unread-dot"></span><% } %><%= m.name %></td>
+              <td><%= m.email %><br><span style="color:var(--gray); font-size:12.5px;"><%= m.phone %></span></td>
+              <td><%= m.service || '—' %></td>
+              <td style="max-width:280px;"><%= m.message || '—' %></td>
+              <td><%= m.created_at %></td>
+              <td class="row-actions">
+                <% if (!m.is_read) { %>
+                <form action="/admin/messages/<%= m.id %>/read" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Mark read</button>
+                </form>
+                <% } %>
+                <form action="/admin/messages/<%= m.id %>/delete" method="POST" onsubmit="return confirm('Delete this message?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+        <% if (pagination.totalPages > 1) { %>
+          <div class="pager" style="display:flex; align-items:center; gap:10px; justify-content:center; padding:16px 0 4px;">
+            <% if (pagination.page > 1) { %>
+              <a class="btn secondary" href="?page=<%= pagination.page - 1 %>">&larr; Prev</a>
+            <% } %>
+            <span style="color:var(--gray); font-size:13px;">Page <%= pagination.page %> of <%= pagination.totalPages %> (<%= pagination.totalCount %> total)</span>
+            <% if (pagination.page < pagination.totalPages) { %>
+              <a class="btn secondary" href="?page=<%= pagination.page + 1 %>">Next &rarr;</a>
+            <% } %>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

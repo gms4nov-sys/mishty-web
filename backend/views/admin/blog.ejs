@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'blog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Blog</h1>
+        <p>Manage blog posts shown on your website</p>
+      </div>
+      <a href="/admin/blog/new" class="btn">+ New Post</a>
+    </div>
+
+    <div class="panel">
+      <% if (posts.length === 0) { %>
+        <div class="empty-state">No blog posts yet. Click "New Post" to write one.</div>
+      <% } else { %>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px;">
+          <input type="text" id="adminSearch" placeholder="Search by title, tag, status…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+          <span style="color:var(--gray); font-size:12.5px;">Drag rows by the ⠿ handle to reorder</span>
+        </div>
+        <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+          <span><span data-bulk-count>0</span> selected</span>
+          <button type="button" class="btn secondary" data-bulk-action="activate" style="padding:5px 12px; font-size:12.5px;">Publish Selected</button>
+          <button type="button" class="btn secondary" data-bulk-action="deactivate" style="padding:5px 12px; font-size:12.5px;">Unpublish Selected</button>
+          <button type="button" class="btn danger" data-bulk-action="delete" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th style="width:26px;"><input type="checkbox" id="selectAll"></th><th></th><th></th><th>Tag</th><th>Title</th><th>Status</th><th>Date</th><th></th></tr></thead>
+          <tbody>
+          <% posts.forEach(p => { %>
+            <tr data-row-id="<%= p.id %>">
+              <td><input type="checkbox" data-row-id="<%= p.id %>"></td>
+              <td class="drag-handle" style="cursor:grab; color:var(--gray);">⠿</td>
+              <td>
+                <% if (p.featured_image) { %>
+                  <img src="<%= p.featured_image %>" alt="" style="width:52px; height:38px; object-fit:cover; border-radius:6px; display:block;">
+                <% } else { %>
+                  <div style="width:52px; height:38px; border-radius:6px; background:var(--sky,#eef4fc); display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--gray); text-align:center;">No image</div>
+                <% } %>
+              </td>
+              <td><span class="tag-pill"><%= p.tag %></span></td>
+              <td><%= p.title %></td>
+              <td><%= p.published ? 'Published' : 'Draft' %></td>
+              <td><%= p.created_at %></td>
+              <td class="row-actions">
+                <a href="/admin/blog/<%= p.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/blog/<%= p.id %>/duplicate" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Duplicate</button>
+                </form>
+                <form action="/admin/blog/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Delete this post?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+<script src="/admin/public/admin-list.js"></script>
+<script>
+  AdminList.init({
+    searchInputId: 'adminSearch',
+    tableId: 'adminTable',
+    selectAllId: 'selectAll',
+    bulkBarId: 'bulkBar',
+    bulkUrl: '/admin/blog/bulk',
+    reorderUrl: '/admin/blog/reorder',
+    csrfToken: '<%= csrfToken %>'
+  });
+</script>
+</body>
+</html>

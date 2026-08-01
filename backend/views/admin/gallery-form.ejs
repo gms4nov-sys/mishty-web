@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= item ? 'Edit' : 'Add' %> Project — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'gallery' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= item ? 'Edit Project' : 'Add Project' %></h1>
+        <p>Shown in the gallery / portfolio page</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= item ? '/admin/gallery/' + item.id : '/admin/gallery' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Project image</label>
+          <% if (item && item.image_url) { %>
+            <div style="margin-bottom:10px;">
+              <img src="<%= item.image_url %>" alt="<%= item.title %>" style="max-height:120px; max-width:220px; object-fit:cover; border-radius:8px; border:1px solid var(--line);">
+            </div>
+          <% } %>
+          <input type="file" name="image" accept="image/*">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">
+            <%= item ? 'Leave empty to keep the current image.' : 'Optional — you can add an image now or later.' %> Max size 5MB.
+          </div>
+        </div>
+        <div class="field">
+          <label>Category key (used for filtering — e.g. travel, brand, recruitment, manufacturing)</label>
+          <input type="text" name="category" value="<%= item ? item.category : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Category label (shown to visitors — e.g. "Travel & Booking")</label>
+          <input type="text" name="category_label" value="<%= item ? item.category_label : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Project title</label>
+          <input type="text" name="title" value="<%= item ? item.title : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea name="description" rows="3" required><%= item ? item.description : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Live project link (optional — shown as a "View Project" button)</label>
+          <input type="url" name="project_url" value="<%= item ? item.project_url : '' %>" placeholder="https://example.com">
+        </div>
+        <div class="field">
+          <label>Technology used (comma-separated — e.g. "React, Node.js, SQLite")</label>
+          <input type="text" name="tech_stack" value="<%= item && item.tech_stack ? JSON.parse(item.tech_stack).join(', ') : '' %>" placeholder="React, Node.js, SQLite">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= item ? 'Save Changes' : 'Add Project' %></button>
+          <a href="/admin/gallery" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Packages | Mishty Web</title>
+<meta name="description" id="pageDesc" content="Compare Basic, Business, and Premium packages and choose the right fit for your budget.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="/index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html" class="active">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/blog.html">Blog</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <a href="/contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow" id="techEyebrow">Choose your package</span>
+    <h1 id="techHeading">Loading…</h1>
+    <p id="techSub"></p>
+    <div id="techFeatures" style="display:none; flex-wrap:wrap; gap:8px; margin-top:14px;"></div>
+    <div id="techButtons" class="hero-ctas" style="display:none; margin-top:16px;"></div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:50px;">
+  <div class="wrap">
+    <div class="breadcrumb-nav">
+      <a href="/services.html">Services</a>
+      <span class="sep">/</span>
+      <a href="#" id="crumbCategory">…</a>
+      <span class="sep">/</span>
+      <span class="current" id="crumbCurrent">…</span>
+    </div>
+
+    <div id="techGallery" style="display:none; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:36px;"></div>
+
+    <div id="pkgGrid" class="pkg-grid">
+      <div class="empty-state" style="padding:40px; text-align:center; color:var(--gray); grid-column:1/-1;">Loading packages…</div>
+    </div>
+
+    <div class="compare-bar" id="compareBar">
+      <span id="compareCount">0 packages selected</span>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-outline" id="compareBtn" type="button">Compare Selected</button>
+        <button class="btn-outline" id="compareClear" type="button">Clear</button>
+      </div>
+    </div>
+
+    <div id="compareTableWrap" class="compare-table-wrap" style="display:none;"></div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const parts = window.location.pathname.split('/').filter(Boolean); // ['services', 'category-slug', 'tech-slug']
+    const categorySlug = parts[1] || '';
+    const techSlug = parts[2] || '';
+    let currentData = null;
+    const selected = new Set();
+
+    function inr(n) { return '₹' + Number(n || 0).toLocaleString('en-IN'); }
+
+    function renderCompareBar() {
+      const bar = document.getElementById('compareBar');
+      const count = document.getElementById('compareCount');
+      count.textContent = selected.size + ' package' + (selected.size === 1 ? '' : 's') + ' selected';
+      bar.classList.toggle('show', selected.size > 0);
+      document.querySelectorAll('.btn-compare input').forEach(cb => {
+        cb.checked = selected.has(cb.value);
+      });
+    }
+
+    function renderCompareTable() {
+      if (!currentData || selected.size < 2) return;
+      const pkgs = currentData.packages.filter(p => selected.has(p.tier));
+      const wrap = document.getElementById('compareTableWrap');
+      const allFeatureRows = Math.max(...pkgs.map(p => p.features.length));
+      let rows = '';
+      for (let i = 0; i < allFeatureRows; i++) {
+        rows += '<tr><td>Feature ' + (i + 1) + '</td>' + pkgs.map(p => `<td>${p.features[i] || '—'}</td>`).join('') + '</tr>';
+      }
+      wrap.style.display = 'block';
+      wrap.innerHTML = `
+        <table class="compare-table">
+          <thead>
+            <tr><th>Package</th>${pkgs.map(p => `<th>${p.name}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Price</strong></td>${pkgs.map(p => `<td><strong>${inr(p.price)}</strong> ${p.price_suffix}</td>`).join('')}</tr>
+            <tr><td>Delivery Time</td>${pkgs.map(p => `<td>${p.delivery_time}</td>`).join('')}</tr>
+            <tr><td>Support</td>${pkgs.map(p => `<td>${p.support_duration}</td>`).join('')}</tr>
+            <tr><td>Revisions</td>${pkgs.map(p => `<td>${p.revisions}</td>`).join('')}</tr>
+            ${rows}
+          </tbody>
+        </table>
+      `;
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    fetch('/api/catalog/' + encodeURIComponent(categorySlug) + '/' + encodeURIComponent(techSlug))
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+      .then(data => {
+        currentData = data;
+        const { category, technology, packages } = data;
+        const seoTitle = technology.seo_title || (technology.name + ' Packages | Mishty Web');
+        const seoDesc = technology.seo_description || technology.description || '';
+        document.title = seoTitle;
+        document.getElementById('pageTitle').textContent = seoTitle;
+        document.getElementById('pageDesc').setAttribute('content', seoDesc);
+        document.getElementById('techHeading').textContent = technology.name + ' Packages';
+        document.getElementById('techSub').textContent = technology.long_description || technology.description || '';
+
+        if (technology.cover_image) {
+          const heroSection = document.querySelector('.page-hero');
+          if (heroSection) {
+            heroSection.style.backgroundImage = 'linear-gradient(rgba(11,31,58,0.55), rgba(11,31,58,0.55)), url(' + technology.cover_image + ')';
+            heroSection.style.backgroundSize = 'cover';
+            heroSection.style.backgroundPosition = 'center';
+            heroSection.style.color = '#fff';
+          }
+        }
+
+        if (technology.features && technology.features.length) {
+          const featuresEl = document.getElementById('techFeatures');
+          featuresEl.style.display = 'flex';
+          featuresEl.innerHTML = technology.features.map(f => `<span class="feature-pill">✓ ${f}</span>`).join('');
+        }
+
+        if (technology.gallery_images && technology.gallery_images.length) {
+          const galleryEl = document.getElementById('techGallery');
+          galleryEl.style.display = 'grid';
+          galleryEl.innerHTML = technology.gallery_images.map(img => `<img src="${img}" alt="${technology.image_alt || technology.name}" loading="lazy" style="width:100%; height:160px; object-fit:cover; border-radius:10px; border:1px solid var(--line,#e2e8f0);">`).join('');
+        }
+        document.getElementById('crumbCategory').textContent = category.name;
+        document.getElementById('crumbCategory').href = '/services/' + category.slug;
+        document.getElementById('crumbCurrent').textContent = technology.name;
+
+        const btnRow = document.getElementById('techButtons');
+        const btnParts = [];
+        if (technology.cta_text) btnParts.push(`<a href="${technology.cta_link || '/contact.html'}" class="btn-primary">${technology.cta_text}</a>`);
+        if (technology.buy_button_text) btnParts.push(`<a href="/contact.html" class="btn-outline">${technology.buy_button_text}</a>`);
+        if (technology.whatsapp_message) btnParts.push(`<a href="#" class="btn-outline" onclick="fetch('/api/settings').then(r=>r.json()).then(s=>{window.open('https://wa.me/'+ (s.site_whatsapp||'').replace(/\\D/g,'') +'?text='+encodeURIComponent('${technology.whatsapp_message.replace(/'/g, "\\'")}'),'_blank');}); return false;">💬 WhatsApp Us</a>`);
+        if (btnParts.length) { btnRow.style.display = 'flex'; btnRow.innerHTML = btnParts.join(''); }
+
+        const grid = document.getElementById('pkgGrid');
+        if (!packages.length) { grid.innerHTML = '<div class="empty-state">No packages listed for this service yet — please get in touch for a custom quote.</div>'; return; }
+
+        grid.innerHTML = packages.map(p => `
+          <div class="pkg-card ${p.ribbon_text ? 'popular' : ''}">
+            ${p.ribbon_text ? `<span class="pkg-popular-badge">${p.ribbon_text}</span>` : ''}
+            <h3>${p.name}</h3>
+            <div class="pkg-price">
+              ${p.discount_price ? `<span style="text-decoration:line-through; opacity:0.55; font-size:0.6em; margin-right:6px;">${inr(p.price)}</span>${inr(p.discount_price)}` : inr(p.price)}
+              <span class="suffix">${p.price_suffix}</span>
+            </div>
+            <div class="pkg-meta">
+              <div><strong>Delivery:</strong> ${p.delivery_time}</div>
+              <div><strong>Support:</strong> ${p.support_duration}</div>
+              <div><strong>Revisions:</strong> ${p.revisions}</div>
+            </div>
+            <ul class="pkg-features">
+              ${p.features.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+            <div class="pkg-actions">
+              <a class="btn-select" href="${p.button_link || ('/services/' + category.slug + '/' + technology.slug + '/' + p.tier)}">${p.button_text || 'Select Plan →'}</a>
+              <label class="btn-compare"><input type="checkbox" value="${p.tier}"> Add to compare</label>
+            </div>
+          </div>
+        `).join('');
+
+        grid.querySelectorAll('.btn-compare input').forEach(cb => {
+          cb.addEventListener('change', () => {
+            if (cb.checked) selected.add(cb.value); else selected.delete(cb.value);
+            renderCompareBar();
+            if (selected.size < 2) document.getElementById('compareTableWrap').style.display = 'none';
+          });
+        });
+      })
+      .catch(() => {
+        document.getElementById('techHeading').textContent = 'Service not found';
+        document.getElementById('pkgGrid').innerHTML = '<div class="empty-state">This service could not be found. <a href="/services.html">Back to all services →</a></div>';
+      });
+
+    document.getElementById('compareBtn').addEventListener('click', renderCompareTable);
+    document.getElementById('compareClear').addEventListener('click', () => {
+      selected.clear();
+      renderCompareBar();
+      document.getElementById('compareTableWrap').style.display = 'none';
+    });
+  })();
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about.html">About</a>
+        <a href="/services.html">Services</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="/services.html">Website Development</a>
+        <a href="/services.html">Digital Marketing</a>
+        <a href="/services.html">SEO</a>
+        <a href="/services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="/contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="/site-settings.js"></script>
+</body>
+</html>

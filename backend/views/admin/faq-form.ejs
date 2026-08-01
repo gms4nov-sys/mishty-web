@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= faq ? 'Edit' : 'Add' %> FAQ — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'faqs' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= faq ? 'Edit FAQ' : 'Add FAQ' %></h1>
+        <p>Shown in the FAQ section on the website</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= faq ? '/admin/faqs/' + faq.id : '/admin/faqs' %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Question</label>
+          <input type="text" name="question" value="<%= faq ? faq.question : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Answer</label>
+          <textarea name="answer" rows="4" required><%= faq ? faq.answer : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Category (used to group FAQs — e.g. General, Payments, Support)</label>
+          <input type="text" name="category" value="<%= faq ? faq.category : 'General' %>">
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="is_active" id="is_active" <%= (!faq || faq.is_active) ? 'checked' : '' %>>
+          <label for="is_active" style="margin:0;">Active (visible on the website)</label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= faq ? 'Save Changes' : 'Add FAQ' %></button>
+          <a href="/admin/faqs" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

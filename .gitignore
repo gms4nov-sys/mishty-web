@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment secrets — never commit real credentials
+.env
+
+# SQLite database + WAL/SHM files (contain live client data — enquiries, messages, etc.)
+backend/db/*.db
+backend/db/*.db-shm
+backend/db/*.db-wal
+backend/db/*.db-journal
+
+# Uploaded files (user content — keep the folder, ignore its contents)
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= page ? 'Edit' : 'Add' %> Page — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'pages' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= page && page.id ? 'Edit Page' : 'Add Page' %></h1>
+        <p>Write in plain text — leave a blank line between paragraphs and headings. No HTML needed.</p>
+      </div>
+    </div>
+
+    <div class="form-card" style="max-width:760px;">
+      <% if (error) { %><div class="error-msg"><%= error %></div><% } %>
+      <form action="<%= page && page.id ? '/admin/pages/' + page.id : '/admin/pages' %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Page title (e.g. "Privacy Policy")</label>
+          <input type="text" name="title" value="<%= page ? page.title : '' %>" required>
+          <% if (page && page.slug) { %>
+            <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Website URL: <code>page.html?slug=<%= page.slug %></code> (this stays the same even if you edit the title)</div>
+          <% } else { %>
+            <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">The website URL will be created automatically from the title.</div>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Page content</label>
+          <textarea name="content" rows="16"><%= page ? page.content : '' %></textarea>
+        </div>
+        <div class="field">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+            <input type="checkbox" name="show_in_footer" value="1" style="width:auto;" <%= (!page || page.show_in_footer) ? 'checked' : '' %>>
+            Show a link to this page in the website footer
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= page && page.id ? 'Save Changes' : 'Add Page' %></button>
+          <a href="/admin/pages" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitleTag">Blog — Mishty Web</title>
+<meta id="pageMetaDesc" name="description" content="Practical, no-jargon advice for local businesses trying to grow online.">
+<meta id="pageMetaKeywords" name="keywords" content="">
+<link id="canonicalLink" rel="canonical" href="">
+<meta id="ogType" property="og:type" content="article">
+<meta id="ogTitle" property="og:title" content="">
+<meta id="ogDesc" property="og:description" content="">
+<meta id="ogUrl" property="og:url" content="">
+<meta id="ogImage" property="og:image" content="">
+<meta name="twitter:card" content="summary_large_image">
+<meta id="twTitle" name="twitter:title" content="">
+<meta id="twDesc" name="twitter:description" content="">
+<meta id="twImage" name="twitter:image" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .bd-meta{display:flex; gap:16px; align-items:center; color:var(--gray); font-size:13.5px; margin-bottom:18px; flex-wrap:wrap;}
+  .bd-tag{background:var(--sky); color:var(--blue); font-weight:700; padding:5px 12px; border-radius:999px; font-size:12px;}
+  .bd-content p{margin-bottom:20px; color:var(--ink); font-size:15.5px; line-height:1.8;}
+  .bd-content{max-width:760px;}
+  .bd-featured-img{width:100%; max-width:760px; border-radius:14px; margin-bottom:32px; display:none; object-fit:cover; max-height:420px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="/index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/blog.html" class="active">Blog</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <a href="/contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow" id="bdTag">Blog</span>
+    <h1 id="bdTitle">Loading…</h1>
+    <div class="bd-meta">
+      <span id="bdAuthor"></span>
+      <span id="bdReadTime"></span>
+      <a href="/blog.html" style="color:var(--blue); font-weight:600;">← Back to all posts</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <img id="bdFeaturedImg" class="bd-featured-img" src="" alt="">
+    <div class="bd-content" id="bdContent">
+      <p>Loading article…</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    // New clean URLs look like /blog/my-post-slug. The old bookmarkable format
+    // (blog-detail.html?slug=my-post-slug) is still supported as a fallback.
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const slug = (pathParts[0] === 'blog' && pathParts[1]) ? pathParts[1] : new URLSearchParams(window.location.search).get('slug');
+    const contentEl = document.getElementById('bdContent');
+    const titleEl = document.getElementById('bdTitle');
+    const featuredImgEl = document.getElementById('bdFeaturedImg');
+
+    function notFound() {
+      titleEl.textContent = 'Post not found';
+      contentEl.innerHTML = '<p>Sorry, this post could not be found. <a href="/blog.html">Browse all posts →</a></p>';
+    }
+
+    if (!slug) { notFound(); }
+    else {
+      fetch('/api/blog/' + encodeURIComponent(slug))
+        .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+        .then(post => {
+          const seoTitle = (post.meta_title && post.meta_title.trim()) ? post.meta_title : (post.title + ' — Mishty Web');
+          const seoDesc = (post.meta_description && post.meta_description.trim()) ? post.meta_description : post.excerpt;
+          const pageUrl = window.location.origin + '/blog/' + encodeURIComponent(post.slug);
+          const imageUrl = post.featured_image ? (window.location.origin + post.featured_image) : '';
+
+          document.getElementById('pageTitleTag').textContent = seoTitle;
+          document.getElementById('pageMetaDesc').setAttribute('content', seoDesc);
+          document.getElementById('pageMetaKeywords').setAttribute('content', post.meta_keywords || '');
+          document.getElementById('canonicalLink').setAttribute('href', pageUrl);
+          document.getElementById('ogType').setAttribute('content', 'article');
+          document.getElementById('ogTitle').setAttribute('content', seoTitle);
+          document.getElementById('ogDesc').setAttribute('content', seoDesc);
+          document.getElementById('ogUrl').setAttribute('content', pageUrl);
+          document.getElementById('ogImage').setAttribute('content', imageUrl);
+          document.getElementById('twTitle').setAttribute('content', seoTitle);
+          document.getElementById('twDesc').setAttribute('content', seoDesc);
+          document.getElementById('twImage').setAttribute('content', imageUrl);
+
+          if (post.featured_image) {
+            featuredImgEl.src = post.featured_image;
+            featuredImgEl.alt = post.title;
+            featuredImgEl.style.display = 'block';
+          }
+
+          document.getElementById('bdTag').textContent = post.tag;
+          titleEl.textContent = post.title;
+          document.getElementById('bdAuthor').textContent = post.author;
+          document.getElementById('bdReadTime').textContent = post.read_time;
+
+          const escapeHtml = str => str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          const source = post.content && post.content.trim() ? post.content : post.excerpt;
+          const paragraphs = source.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+          contentEl.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
+        })
+        .catch(notFound);
+    }
+  })();
+</script>
+
+<section class="cta-banner">
+  <div class="wrap">
+    <h2>Need help with something like this?</h2>
+    <p>Tell us your goal — we'll tell you honestly what it'll take.</p>
+    <div class="hero-ctas">
+      <a href="/contact.html" class="btn-primary">Get Free Consultation →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about.html">About</a>
+        <a href="/services.html">Services</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="/services.html">Website Development</a>
+        <a href="/services.html">Digital Marketing</a>
+        <a href="/services.html">SEO</a>
+        <a href="/services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="/contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="/site-settings.js"></script>
+</body>
+</html>

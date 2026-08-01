@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Slider — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'hero-slides' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Hero Slider</h1>
+        <p>Manage the homepage banner slides — images, headline, buttons, and stats</p>
+      </div>
+      <a href="/admin/hero-slides/new" class="btn">+ Add Slide</a>
+    </div>
+
+    <div class="panel">
+      <% if (slides.length === 0) { %>
+        <div class="empty-state">No slides yet. Click "Add Slide" to create the homepage hero banner.</div>
+      <% } else { %>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px;">
+          <input type="text" id="adminSearch" placeholder="Search by heading, button text…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+        </div>
+        <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+          <span><span data-bulk-count>0</span> selected</span>
+          <button type="button" class="btn secondary" data-bulk-action="activate" style="padding:5px 12px; font-size:12.5px;">Activate Selected</button>
+          <button type="button" class="btn secondary" data-bulk-action="deactivate" style="padding:5px 12px; font-size:12.5px;">Deactivate Selected</button>
+          <button type="button" class="btn danger" data-bulk-action="delete" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th style="width:26px;"><input type="checkbox" id="selectAll"></th><th>Image</th><th>Heading</th><th>Buttons</th><th>Status</th><th>Order</th><th></th></tr></thead>
+          <tbody>
+          <% slides.forEach((s, i) => { %>
+            <tr data-row-id="<%= s.id %>">
+              <td><input type="checkbox" data-row-id="<%= s.id %>"></td>
+              <td>
+                <% if (s.desktop_image) { %>
+                  <img src="<%= s.desktop_image %>" alt="<%= s.image_alt %>" style="width:80px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--line);">
+                <% } else { %>
+                  <span style="display:inline-flex; width:80px; height:48px; align-items:center; justify-content:center; background:var(--sky); border-radius:6px; color:var(--gray); font-size:11px;">No image</span>
+                <% } %>
+              </td>
+              <td style="max-width:280px;">
+                <strong><%= s.heading %></strong><% if (s.highlight) { %> <span style="color:var(--blue);"><%= s.highlight %></span><% } %>
+              </td>
+              <td style="font-size:12.5px; color:var(--gray);">
+                <% if (s.button1_text) { %><%= s.button1_text %><% } %><% if (s.button2_text) { %> · <%= s.button2_text %><% } %>
+              </td>
+              <td>
+                <form action="/admin/hero-slides/<%= s.id %>/toggle" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn <%= s.is_active ? 'secondary' : '' %>" style="padding:4px 10px; font-size:12px;">
+                    <%= s.is_active ? '✅ Active' : '⏸ Inactive' %>
+                  </button>
+                </form>
+              </td>
+              <td style="white-space:nowrap;">
+                <form action="/admin/hero-slides/<%= s.id %>/move/up" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === 0 ? 'disabled' : '' %>>↑</button>
+                </form>
+                <form action="/admin/hero-slides/<%= s.id %>/move/down" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === slides.length - 1 ? 'disabled' : '' %>>↓</button>
+                </form>
+              </td>
+              <td class="row-actions">
+                <a href="/admin/hero-slides/<%= s.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/hero-slides/<%= s.id %>/duplicate" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Duplicate</button>
+                </form>
+                <form action="/admin/hero-slides/<%= s.id %>/delete" method="POST" onsubmit="return confirm('Delete this slide?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+<script src="/admin/public/admin-list.js"></script>
+<script>
+  AdminList.init({
+    searchInputId: 'adminSearch',
+    tableId: 'adminTable',
+    selectAllId: 'selectAll',
+    bulkBarId: 'bulkBar',
+    bulkUrl: '/admin/hero-slides/bulk',
+    csrfToken: '<%= csrfToken %>'
+  });
+</script>
+</body>
+</html>

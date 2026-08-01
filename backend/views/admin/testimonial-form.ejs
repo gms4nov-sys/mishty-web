@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= testimonial ? 'Edit' : 'Add' %> Testimonial — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'testimonials' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= testimonial ? 'Edit Testimonial' : 'Add Testimonial' %></h1>
+        <p>Shown on the homepage testimonials section.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= testimonial ? '/admin/testimonials/' + testimonial.id : '/admin/testimonials' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Client photo (optional)</label>
+          <% if (testimonial && testimonial.avatar_url) { %>
+            <div style="margin-bottom:10px;">
+              <img src="<%= testimonial.avatar_url %>" alt="" style="width:64px; height:64px; object-fit:cover; border-radius:50%; border:1px solid var(--line);">
+            </div>
+          <% } %>
+          <input type="file" name="avatar" accept="image/*">
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">If left empty, the client's initial will be shown instead.</div>
+        </div>
+        <div class="field">
+          <label>Client name</label>
+          <input type="text" name="client_name" value="<%= testimonial ? testimonial.client_name : '' %>" required>
+        </div>
+        <div class="field">
+          <label>Client role / company (e.g. "Owner, Vikash Travels")</label>
+          <input type="text" name="client_role" value="<%= testimonial ? testimonial.client_role : '' %>">
+        </div>
+        <div class="field">
+          <label>Quote</label>
+          <textarea name="quote" rows="4" required><%= testimonial ? testimonial.quote : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Rating (1–5 stars)</label>
+          <select name="rating">
+            <% [5,4,3,2,1].forEach(n => { %>
+              <option value="<%= n %>" <%= testimonial && testimonial.rating === n ? 'selected' : (!testimonial && n === 5 ? 'selected' : '') %>><%= n %> stars</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= testimonial ? 'Save Changes' : 'Add Testimonial' %></button>
+          <a href="/admin/testimonials" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

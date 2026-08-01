@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+<style>
+  .settings-section{background:var(--white); border:1px solid var(--line); border-radius:12px; padding:28px 32px; max-width:720px; margin-bottom:24px;}
+  .settings-section h2{font-size:16px; color:var(--navy); margin-bottom:4px;}
+  .settings-section .hint{color:var(--gray); font-size:13px; margin-bottom:20px;}
+  .field .hint{color:var(--gray); font-size:12.5px; margin-top:4px;}
+  .logo-preview{display:flex; align-items:center; gap:16px; margin-bottom:18px; padding:14px; background:var(--sky); border-radius:8px;}
+  .logo-preview img{max-height:50px; max-width:180px; object-fit:contain; background:#fff; padding:6px; border-radius:6px;}
+  .logo-preview .empty{color:var(--gray); font-size:13px;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){.two-col{grid-template-columns:1fr;}}
+  .inline-form{display:inline;}
+</style>
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'settings' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Settings</h1>
+        <p>Update your website's contact info, logo, and payment details — no coding needed. Changes appear on the live site right away.</p>
+      </div>
+    </div>
+
+    <% if (error) { %><div class="error-msg" style="max-width:720px;"><%= error %></div><% } %>
+    <% if (success) { %><div class="success-msg" style="max-width:720px;"><%= success %></div><% } %>
+
+    <!-- LOGO -->
+    <div class="settings-section">
+      <h2>🖼 Website Logo</h2>
+      <p class="hint">Upload an image to replace the text logo shown in the header and footer of your website.</p>
+
+      <div class="logo-preview">
+        <% if (settings.site_logo_url) { %>
+          <img src="<%= settings.site_logo_url %>" alt="Current logo">
+        <% } else { %>
+          <span class="empty">No logo uploaded yet — the text "MishtyWeb" is currently shown.</span>
+        <% } %>
+      </div>
+
+      <form action="/admin/settings/logo" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Choose a logo image (PNG or JPG with a transparent/white background works best)</label>
+          <input type="file" name="logo" accept="image/*" required>
+          <div class="hint">Max size 5MB. Recommended: a wide, short image (like a banner) rather than a tall square.</div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Upload Logo</button>
+          <% if (settings.site_logo_url) { %>
+            <form action="/admin/settings/logo/remove" method="POST" class="inline-form" onsubmit="return confirm('Remove the logo and go back to the text logo?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn secondary">Remove Logo</button>
+            </form>
+          <% } %>
+        </div>
+      </form>
+    </div>
+
+    <!-- CONTACT INFO -->
+    <div class="settings-section">
+      <h2>📞 Contact Details</h2>
+      <p class="hint">This phone number, email, and address is shown across every page of your website (header bar, footer, and the Contact page).</p>
+      <form action="/admin/settings/general" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="two-col">
+          <div class="field">
+            <label>Phone number (shown to visitors)</label>
+            <input type="text" name="site_phone" value="<%= settings.site_phone %>" placeholder="+91-9876543210" required>
+          </div>
+          <div class="field">
+            <label>WhatsApp number (optional — adds a WhatsApp chat button)</label>
+            <input type="text" name="site_whatsapp" value="<%= settings.site_whatsapp %>" placeholder="+91-9876543210">
+            <div class="hint">Leave empty to hide the WhatsApp button.</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Email address</label>
+            <input type="email" name="site_email" value="<%= settings.site_email %>" required>
+          </div>
+          <div class="field">
+            <label>Business hours</label>
+            <input type="text" name="site_hours" value="<%= settings.site_hours %>" placeholder="Mon – Sat, 10:00 AM – 7:00 PM">
+          </div>
+        </div>
+        <div class="field">
+          <label>Address</label>
+          <input type="text" name="site_address" value="<%= settings.site_address %>" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Save Contact Details</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="settings-section">
+      <h2>💳 Payment Details</h2>
+      <p class="hint">Shown on your Contact page so clients know how to pay you (UPI, bank transfer, or scan a QR code). Leave any field blank to hide it.</p>
+      <form action="/admin/settings/payment" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>UPI ID</label>
+          <input type="text" name="payment_upi" value="<%= settings.payment_upi %>" placeholder="mishtyweb@upi">
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Bank name</label>
+            <input type="text" name="payment_bank_name" value="<%= settings.payment_bank_name %>">
+          </div>
+          <div class="field">
+            <label>Account holder name</label>
+            <input type="text" name="payment_account_name" value="<%= settings.payment_account_name %>">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Account number</label>
+            <input type="text" name="payment_account_number" value="<%= settings.payment_account_number %>">
+          </div>
+          <div class="field">
+            <label>IFSC code</label>
+            <input type="text" name="payment_ifsc" value="<%= settings.payment_ifsc %>">
+          </div>
+        </div>
+        <div class="field">
+          <label>Payment note (optional — any extra instructions for clients)</label>
+          <textarea name="payment_note" rows="2"><%= settings.payment_note %></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Save Payment Details</button>
+        </div>
+      </form>
+
+      <hr style="border:none; border-top:1px solid var(--line); margin:22px 0;">
+
+      <div class="logo-preview">
+        <% if (settings.payment_qr_url) { %>
+          <img src="<%= settings.payment_qr_url %>" alt="Payment QR code">
+        <% } else { %>
+          <span class="empty">No QR code uploaded yet.</span>
+        <% } %>
+      </div>
+      <form action="/admin/settings/payment/qr" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Upload a payment QR code image (UPI QR, etc.)</label>
+          <input type="file" name="qr" accept="image/*" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Upload QR Code</button>
+          <% if (settings.payment_qr_url) { %>
+            <form action="/admin/settings/payment/qr/remove" method="POST" class="inline-form" onsubmit="return confirm('Remove the QR code?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn secondary">Remove QR Code</button>
+            </form>
+          <% } %>
+        </div>
+      </form>
+    </div>
+
+    <!-- SOCIAL MEDIA & TRUST STATS -->
+    <div class="settings-section">
+      <h2>🔗 Social Media & Trust Stats</h2>
+      <p class="hint">Social icons appear in the footer. Trust stats appear as a highlight strip on the homepage (e.g. "50+ Projects Delivered").</p>
+      <form action="/admin/settings/branding-extra" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="two-col">
+          <div class="field">
+            <label>Facebook page URL</label>
+            <input type="url" name="social_facebook" value="<%= settings.social_facebook %>" placeholder="https://facebook.com/yourpage">
+          </div>
+          <div class="field">
+            <label>Instagram profile URL</label>
+            <input type="url" name="social_instagram" value="<%= settings.social_instagram %>" placeholder="https://instagram.com/yourpage">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>LinkedIn page URL</label>
+            <input type="url" name="social_linkedin" value="<%= settings.social_linkedin %>" placeholder="https://linkedin.com/company/yourpage">
+          </div>
+          <div class="field">
+            <label>Twitter / X profile URL</label>
+            <input type="url" name="social_twitter" value="<%= settings.social_twitter %>" placeholder="https://x.com/yourpage">
+          </div>
+        </div>
+        <div class="field">
+          <label>YouTube channel URL</label>
+          <input type="url" name="social_youtube" value="<%= settings.social_youtube %>" placeholder="https://youtube.com/@yourchannel">
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--line); margin:22px 0;">
+        <p class="hint" style="margin-bottom:14px;">Trust stats — 4 short number + label pairs shown on the homepage.</p>
+
+        <div class="two-col">
+          <div class="field">
+            <label>Stat 1 number</label>
+            <input type="text" name="stat1_number" value="<%= settings.stat1_number %>" placeholder="50+">
+          </div>
+          <div class="field">
+            <label>Stat 1 label</label>
+            <input type="text" name="stat1_label" value="<%= settings.stat1_label %>" placeholder="Projects Delivered">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Stat 2 number</label>
+            <input type="text" name="stat2_number" value="<%= settings.stat2_number %>" placeholder="5+">
+          </div>
+          <div class="field">
+            <label>Stat 2 label</label>
+            <input type="text" name="stat2_label" value="<%= settings.stat2_label %>" placeholder="Years Experience">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Stat 3 number</label>
+            <input type="text" name="stat3_number" value="<%= settings.stat3_number %>" placeholder="30+">
+          </div>
+          <div class="field">
+            <label>Stat 3 label</label>
+            <input type="text" name="stat3_label" value="<%= settings.stat3_label %>" placeholder="Happy Clients">
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>Stat 4 number</label>
+            <input type="text" name="stat4_number" value="<%= settings.stat4_number %>" placeholder="4">
+          </div>
+          <div class="field">
+            <label>Stat 4 label</label>
+            <input type="text" name="stat4_label" value="<%= settings.stat4_label %>" placeholder="Industries Served">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Save Social Links & Stats</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="settings-section">
+      <h2>🦶 Footer</h2>
+      <p class="hint">Controls the footer logo, description text, and copyright line shown on every page. Quick links are managed separately under Navigation, and legal pages (Privacy Policy, Terms, etc.) under Pages.</p>
+      <form action="/admin/settings/footer" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Footer logo (optional — leave unset to reuse the main site logo above)</label>
+          <% if (settings.footer_logo_url) { %>
+            <div style="margin-bottom:8px;"><img src="<%= settings.footer_logo_url %>" style="max-height:60px; border-radius:6px; border:1px solid var(--line); background:#0B1F3A; padding:6px;"></div>
+          <% } %>
+          <input type="file" name="footer_logo" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Footer description</label>
+          <textarea name="footer_description" rows="2"><%= settings.footer_description %></textarea>
+        </div>
+        <div class="field">
+          <label>Copyright line</label>
+          <input type="text" name="footer_copyright" value="<%= settings.footer_copyright %>">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Save Footer</button>
+          <% if (settings.footer_logo_url) { %>
+          <form action="/admin/settings/footer/logo/remove" method="POST" class="inline-form" onsubmit="return confirm('Remove the footer logo?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn secondary">Remove Footer Logo</button>
+          </form>
+          <% } %>
+        </div>
+      </form>
+    </div>
+
+    <!-- SEO DEFAULTS -->
+    <div class="settings-section">
+      <h2>🔍 SEO Defaults</h2>
+      <p class="hint">Used as the site-wide fallback meta tags on pages that don't set their own — search engines and social share previews use these.</p>
+      <form action="/admin/settings/seo" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Default meta title</label>
+          <input type="text" name="default_meta_title" value="<%= settings.default_meta_title %>">
+        </div>
+        <div class="field">
+          <label>Default meta description</label>
+          <textarea name="default_meta_description" rows="3"><%= settings.default_meta_description %></textarea>
+        </div>
+        <div class="field">
+          <label>Default keywords (comma-separated)</label>
+          <input type="text" name="default_keywords" value="<%= settings.default_keywords %>">
+        </div>
+        <div class="field">
+          <label>Canonical URL (optional — usually leave blank so each page uses its own URL)</label>
+          <input type="text" name="default_canonical" value="<%= settings.default_canonical %>" placeholder="https://mishtyweb.com">
+        </div>
+        <div class="field">
+          <label>Robots directive</label>
+          <select name="default_robots">
+            <option value="index, follow" <%= settings.default_robots === 'index, follow' ? 'selected' : '' %>>index, follow (default — visible in search)</option>
+            <option value="noindex, nofollow" <%= settings.default_robots === 'noindex, nofollow' ? 'selected' : '' %>>noindex, nofollow (hide from search — e.g. staging site)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Default OG image (social share preview image)</label>
+          <% if (settings.default_og_image) { %>
+            <div style="margin-bottom:8px;"><img src="<%= settings.default_og_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div>
+          <% } %>
+          <input type="file" name="default_og_image" accept="image/*">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Save SEO Defaults</button>
+          <% if (settings.default_og_image) { %>
+          <form action="/admin/settings/seo/og-image/remove" method="POST" class="inline-form" onsubmit="return confirm('Remove the OG image?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn danger">Remove OG Image</button>
+          </form>
+          <% } %>
+        </div>
+      </form>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="settings-section">
+      <h2>🔒 Change Admin Password</h2>
+      <p class="hint">Use this to change the password you use to log in to this admin panel.</p>
+      <form action="/admin/settings/password" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Current password</label>
+          <input type="password" name="current_password" required>
+        </div>
+        <div class="field">
+          <label>New password</label>
+          <input type="password" name="new_password" required minlength="6">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

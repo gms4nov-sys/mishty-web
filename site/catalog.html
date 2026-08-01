@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Service Catalog | Mishty Web</title>
+<meta name="description" id="pageDesc" content="Browse this service category and choose the exact technology or service you need.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="/index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html" class="active">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/blog.html">Blog</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <a href="/contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow" id="catEyebrow">Service catalog</span>
+    <h1 id="catHeading">Loading…</h1>
+    <p id="catSub"></p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:50px;">
+  <div class="wrap">
+    <div class="breadcrumb-nav">
+      <a href="/services.html">Services</a>
+      <span class="sep">/</span>
+      <span class="current" id="crumbCurrent">…</span>
+    </div>
+
+    <div id="techGrid" class="tech-grid">
+      <div class="empty-state" style="padding:40px; text-align:center; color:var(--gray); grid-column:1/-1;">Loading…</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const parts = window.location.pathname.split('/').filter(Boolean); // ['services', 'category-slug']
+    const categorySlug = parts[1] || '';
+
+    fetch('/api/catalog/' + encodeURIComponent(categorySlug))
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+      .then(({ category, technologies }) => {
+        const seoTitle = category.seo_title || (category.name + ' Packages | Mishty Web');
+        const seoDesc = category.seo_description || category.description || '';
+        document.title = seoTitle;
+        document.getElementById('pageTitle').textContent = seoTitle;
+        document.getElementById('pageDesc').setAttribute('content', seoDesc);
+        document.getElementById('catHeading').textContent = category.name;
+        document.getElementById('catSub').textContent = category.description || '';
+        document.getElementById('crumbCurrent').textContent = category.name;
+
+        const grid = document.getElementById('techGrid');
+        if (!technologies.length) { grid.innerHTML = '<div class="empty-state">No services listed under this category yet.</div>'; return; }
+        grid.innerHTML = technologies.map(t => `
+          <div class="tech-card">
+            ${t.cover_image
+              ? `<div class="tech-emoji" style="background-image:url('${t.cover_image}'); background-size:cover; background-position:center; font-size:0;">&nbsp;</div>`
+              : `<div class="tech-emoji">${t.icon || category.icon || '🧩'}</div>`}
+            <h3>${t.name}</h3>
+            <p>${t.description || ''}</p>
+            <a class="btn-view" href="/services/${category.slug}/${t.slug}">View Packages →</a>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('catHeading').textContent = 'Category not found';
+        document.getElementById('catSub').textContent = '';
+        document.getElementById('techGrid').innerHTML = '<div class="empty-state">This service category could not be found. <a href="/services.html">Back to all services →</a></div>';
+      });
+  })();
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about.html">About</a>
+        <a href="/services.html">Services</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="/services.html">Website Development</a>
+        <a href="/services.html">Digital Marketing</a>
+        <a href="/services.html">SEO</a>
+        <a href="/services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="/contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="/site-settings.js"></script>
+</body>
+</html>

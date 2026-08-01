@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= navItem ? 'Edit' : 'Add' %> Nav Link — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'nav-items' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= navItem ? 'Edit Link' : 'Add Link' %></h1>
+        <p>Appears in the header or footer navigation</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= navItem ? '/admin/nav-items/' + navItem.id : '/admin/nav-items' %>" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Location</label>
+          <% if (navItem) { %>
+            <input type="text" value="<%= navItem.location === 'footer' ? 'Footer' : 'Header' %>" disabled>
+          <% } else { %>
+            <select name="location">
+              <option value="header" <%= defaultLocation === 'header' ? 'selected' : '' %>>Header</option>
+              <option value="footer" <%= defaultLocation === 'footer' ? 'selected' : '' %>>Footer</option>
+            </select>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Label</label>
+          <input type="text" name="label" value="<%= navItem ? navItem.label : '' %>" required placeholder="e.g. Careers">
+        </div>
+        <div class="field">
+          <label>URL</label>
+          <input type="text" name="url" value="<%= navItem ? navItem.url : '' %>" required placeholder="e.g. /page.html?slug=careers or https://example.com">
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="open_new_tab" id="open_new_tab" <%= navItem && navItem.open_new_tab ? 'checked' : '' %>>
+          <label for="open_new_tab" style="margin:0;">Open in a new tab</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="is_active" id="is_active" <%= (!navItem || navItem.is_active) ? 'checked' : '' %>>
+          <label for="is_active" style="margin:0;">Active (visible on the website)</label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= navItem ? 'Save Changes' : 'Add Link' %></button>
+          <a href="/admin/nav-items" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

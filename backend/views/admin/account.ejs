@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'account' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>My Account</h1>
+        <p>Logged in as <strong><%= admin.username %></strong> — role: <strong><%= admin.role === 'admin' ? 'Admin' : 'Editor' %></strong></p>
+      </div>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %><div class="success-msg" style="max-width:520px;"><%= success %></div><% } %>
+    <% if (typeof error !== 'undefined' && error) { %><div class="error-msg" style="max-width:520px;"><%= error %></div><% } %>
+
+    <div class="settings-section" style="max-width:520px;">
+      <h2>🔒 Change Password</h2>
+      <form action="/admin/settings/password" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Current password</label>
+          <input type="password" name="current_password" required>
+        </div>
+        <div class="field">
+          <label>New password</label>
+          <input type="password" name="new_password" required minlength="8">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Update Password</button>
+        </div>
+      </form>
+    </div>
+
+    <% if (admin.role !== 'admin') { %>
+      <p style="color:var(--gray); font-size:12.5px; max-width:520px;">Site-wide Settings (contact info, footer, SEO, payment details) and Admin Users are managed by full Admin accounts. Ask an Admin if you need something changed there.</p>
+    <% } %>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= slide ? 'Edit' : 'Add' %> Hero Slide — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'hero-slides' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= slide ? 'Edit Slide' : 'Add Slide' %></h1>
+        <p>Shown in the homepage hero banner</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= slide ? '/admin/hero-slides/' + slide.id : '/admin/hero-slides' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <h3 style="margin:0 0 12px;">Images</h3>
+        <div class="field">
+          <label>Desktop banner image</label>
+          <% if (slide && slide.desktop_image) { %><div style="margin-bottom:8px;"><img src="<%= slide.desktop_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="desktop_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Mobile banner image</label>
+          <% if (slide && slide.mobile_image) { %><div style="margin-bottom:8px;"><img src="<%= slide.mobile_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="mobile_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Background image</label>
+          <% if (slide && slide.bg_image) { %><div style="margin-bottom:8px;"><img src="<%= slide.bg_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="bg_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Floating image (small accent image over the banner)</label>
+          <% if (slide && slide.floating_image) { %><div style="margin-bottom:8px;"><img src="<%= slide.floating_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="floating_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Image alt text (for SEO / accessibility)</label>
+          <input type="text" name="image_alt" value="<%= slide ? slide.image_alt : '' %>">
+        </div>
+        <div style="color:var(--gray); font-size:12.5px; margin:-8px 0 16px;">Leave any image field empty to keep the current one. Max 5MB per image, JPG/PNG/WEBP/GIF.</div>
+
+        <h3 style="margin:20px 0 12px;">Content</h3>
+        <div class="field">
+          <label>Small badge text</label>
+          <input type="text" name="badge" value="<%= slide ? slide.badge : '' %>" placeholder="Full-service digital partner">
+        </div>
+        <div class="field">
+          <label>Main heading</label>
+          <input type="text" name="heading" value="<%= slide ? slide.heading : '' %>" required placeholder="Digital marketing & web development that">
+        </div>
+        <div class="field">
+          <label>Highlight text (shown in accent color, right after the heading)</label>
+          <input type="text" name="highlight" value="<%= slide ? slide.highlight : '' %>" placeholder="grows your business">
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea name="description" rows="3"><%= slide ? slide.description : '' %></textarea>
+        </div>
+        <div class="field">
+          <label>Button 1 text</label>
+          <input type="text" name="button1_text" value="<%= slide ? slide.button1_text : '' %>" placeholder="Get Free Consultation →">
+        </div>
+        <div class="field">
+          <label>Button 1 link</label>
+          <input type="text" name="button1_link" value="<%= slide ? slide.button1_link : '' %>" placeholder="contact.html">
+        </div>
+        <div class="field">
+          <label>Button 2 text</label>
+          <input type="text" name="button2_text" value="<%= slide ? slide.button2_text : '' %>" placeholder="View Our Work">
+        </div>
+        <div class="field">
+          <label>Button 2 link</label>
+          <input type="text" name="button2_link" value="<%= slide ? slide.button2_link : '' %>" placeholder="gallery.html">
+        </div>
+
+        <h3 style="margin:20px 0 12px;">Analytics / trust cards (optional — leave blank to keep the site defaults from Settings)</h3>
+        <div class="field"><label>Rating</label><input type="text" name="rating" value="<%= slide ? slide.rating : '' %>" placeholder="4.9/5"></div>
+        <div class="field"><label>Projects</label><input type="text" name="projects_count" value="<%= slide ? slide.projects_count : '' %>" placeholder="50+"></div>
+        <div class="field"><label>Happy Clients</label><input type="text" name="happy_clients" value="<%= slide ? slide.happy_clients : '' %>" placeholder="30+"></div>
+        <div class="field"><label>Experience</label><input type="text" name="experience" value="<%= slide ? slide.experience : '' %>" placeholder="5+ years"></div>
+
+        <h3 style="margin:20px 0 12px;">Display &amp; Scheduling</h3>
+        <div class="checkbox-row">
+          <input type="checkbox" name="is_active" id="is_active" <%= (!slide || slide.is_active) ? 'checked' : '' %>>
+          <label for="is_active" style="margin:0;">Active (visible on the website)</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" name="autoplay" id="autoplay" <%= (!slide || slide.autoplay) ? 'checked' : '' %>>
+          <label for="autoplay" style="margin:0;">Autoplay this slide in rotation</label>
+        </div>
+        <div class="field">
+          <label>Delay between slides (milliseconds)</label>
+          <input type="number" name="delay_ms" value="<%= slide ? slide.delay_ms : 6000 %>" min="1000" step="500">
+        </div>
+        <div class="field">
+          <label>Animation</label>
+          <select name="animation">
+            <% ['fade-up','slide-in','zoom','none'].forEach(a => { %>
+              <option value="<%= a %>" <%= slide && slide.animation === a ? 'selected' : '' %>><%= a %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label>Transition</label>
+          <select name="transition">
+            <% ['fade','slide'].forEach(t => { %>
+              <option value="<%= t %>" <%= slide && slide.transition === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label>Schedule start (optional — leave blank to show immediately)</label>
+          <input type="datetime-local" name="schedule_start" value="<%= slide && slide.schedule_start ? slide.schedule_start : '' %>">
+        </div>
+        <div class="field">
+          <label>Schedule end (optional — leave blank to show indefinitely)</label>
+          <input type="datetime-local" name="schedule_end" value="<%= slide && slide.schedule_end ? slide.schedule_end : '' %>">
+        </div>
+
+        <h3 style="margin:20px 0 12px;">SEO</h3>
+        <div class="field"><label>SEO Title</label><input type="text" name="seo_title" value="<%= slide ? slide.seo_title : '' %>"></div>
+        <div class="field"><label>SEO Description</label><textarea name="seo_description" rows="2"><%= slide ? slide.seo_description : '' %></textarea></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= slide ? 'Save Changes' : 'Add Slide' %></button>
+          <a href="/admin/hero-slides" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

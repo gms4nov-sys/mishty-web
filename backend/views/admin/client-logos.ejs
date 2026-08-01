@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Logos — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+<style>
+  .logo-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:16px; margin-top:20px;}
+  .logo-card{background:var(--white); border:1px solid var(--line); border-radius:10px; padding:16px; text-align:center; cursor:grab;}
+  .logo-card img{max-width:100%; max-height:60px; object-fit:contain; margin-bottom:10px;}
+  .logo-card .name{font-size:12.5px; color:var(--gray); margin-bottom:8px;}
+  .logo-card .card-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'client-logos' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Client Logos</h1>
+        <p>Shown as a "Trusted by" logo strip on the homepage. Best with transparent PNG logos. Drag cards to reorder.</p>
+      </div>
+    </div>
+
+    <div class="form-card" style="max-width:600px;">
+      <form action="/admin/client-logos" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Client / company name</label>
+          <input type="text" name="name" placeholder="e.g. Vikash Travels" required>
+        </div>
+        <div class="field">
+          <label>Logo image</label>
+          <input type="file" name="logo" accept="image/*" required>
+          <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Max size 5MB. PNG with transparent background looks best.</div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Upload Logo</button>
+        </div>
+      </form>
+    </div>
+
+    <% if (logos.length === 0) { %>
+      <div class="empty-state" style="margin-top:20px;">No client logos yet.</div>
+    <% } else { %>
+      <div style="display:flex; gap:10px; align-items:center; margin:20px 0 4px;">
+        <input type="text" id="adminSearch" placeholder="Search by client name…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+      </div>
+      <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin:12px 0;">
+        <span><span data-bulk-count>0</span> selected</span>
+        <button type="button" id="bulkDeleteBtn" class="btn danger" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+      </div>
+      <div class="logo-grid" id="logoGrid">
+        <% logos.forEach(l => { %>
+          <div class="logo-card" draggable="true" data-row-id="<%= l.id %>" data-name="<%= l.name.toLowerCase() %>">
+            <div class="card-top">
+              <input type="checkbox" data-row-id="<%= l.id %>">
+              <span style="color:var(--gray);">⠿</span>
+            </div>
+            <img src="<%= l.logo_url %>" alt="<%= l.name %>">
+            <div class="name"><%= l.name %></div>
+            <form action="/admin/client-logos/<%= l.id %>/delete" method="POST" onsubmit="return confirm('Remove this logo?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn danger" style="width:100%;">Remove</button>
+            </form>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</div>
+<script>
+(function () {
+  var grid = document.getElementById('logoGrid');
+  if (!grid) return;
+  var csrfToken = '<%= csrfToken %>';
+
+  // Search
+  var search = document.getElementById('adminSearch');
+  if (search) {
+    search.addEventListener('input', function () {
+      var q = search.value.trim().toLowerCase();
+      grid.querySelectorAll('.logo-card').forEach(function (card) {
+        card.style.display = (!q || card.getAttribute('data-name').indexOf(q) !== -1) ? '' : 'none';
+      });
+    });
+  }
+
+  // Bulk select + delete
+  var bulkBar = document.getElementById('bulkBar');
+  var countEl = bulkBar.querySelector('[data-bulk-count]');
+  function refreshBar() {
+    var n = grid.querySelectorAll('input[type="checkbox"]:checked').length;
+    bulkBar.style.display = n ? 'flex' : 'none';
+    countEl.textContent = n;
+  }
+  grid.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { cb.addEventListener('change', refreshBar); });
+  document.getElementById('bulkDeleteBtn').addEventListener('click', function () {
+    var ids = Array.prototype.slice.call(grid.querySelectorAll('input[type="checkbox"]:checked')).map(function (cb) { return cb.getAttribute('data-row-id'); });
+    if (!ids.length || !confirm('Delete ' + ids.length + ' selected logo(s)?')) return;
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/admin/client-logos/bulk';
+    form.innerHTML = '<input type="hidden" name="_csrf" value="' + csrfToken + '"><input type="hidden" name="action" value="delete">' +
+      ids.map(function (id) { return '<input type="hidden" name="ids" value="' + id + '">'; }).join('');
+    document.body.appendChild(form);
+    form.submit();
+  });
+
+  // Drag-drop reorder
+  var dragEl = null;
+  grid.querySelectorAll('.logo-card').forEach(function (card) {
+    card.addEventListener('dragstart', function () { dragEl = card; card.style.opacity = '0.4'; });
+    card.addEventListener('dragend', function () { card.style.opacity = ''; dragEl = null; });
+    card.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      if (!dragEl || dragEl === card) return;
+      var rect = card.getBoundingClientRect();
+      var after = (e.clientX - rect.left) > rect.width / 2;
+      card.parentNode.insertBefore(dragEl, after ? card.nextSibling : card);
+    });
+    card.addEventListener('drop', function (e) {
+      e.preventDefault();
+      var ids = Array.prototype.map.call(grid.querySelectorAll('.logo-card'), function (c) { return c.getAttribute('data-row-id'); });
+      fetch('/admin/client-logos/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _csrf: csrfToken, ids: ids })
+      }).catch(function (err) { console.warn('Reorder save failed:', err); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

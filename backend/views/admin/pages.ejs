@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal Pages — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'pages' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Legal Pages</h1>
+        <p>Privacy Policy, Terms & Conditions, Refund Policy, Disclaimer, and any other info pages your website needs.</p>
+      </div>
+      <a href="/admin/pages/new" class="btn">+ Add Page</a>
+    </div>
+
+    <div class="panel">
+      <% if (pages.length === 0) { %>
+        <div class="empty-state">No pages yet. Click "Add Page" to create one.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Title</th><th>Website URL</th><th>Shown in footer?</th><th></th></tr></thead>
+          <tbody>
+          <% pages.forEach(p => { %>
+            <tr>
+              <td><%= p.title %></td>
+              <td><code>page.html?slug=<%= p.slug %></code></td>
+              <td><%= p.show_in_footer ? 'Yes' : 'No (hidden)' %></td>
+              <td class="row-actions">
+                <a href="/admin/pages/<%= p.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/pages/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Delete this page? This cannot be undone.');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

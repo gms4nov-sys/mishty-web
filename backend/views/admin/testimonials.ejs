@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testimonials — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'testimonials' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Testimonials</h1>
+        <p>Client quotes shown on the homepage to build trust with new visitors.</p>
+      </div>
+      <a href="/admin/testimonials/new" class="btn">+ Add Testimonial</a>
+    </div>
+
+    <div class="panel">
+      <% if (testimonials.length === 0) { %>
+        <div class="empty-state">No testimonials yet. Click "Add Testimonial" to add your first client quote.</div>
+      <% } else { %>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px;">
+          <input type="text" id="adminSearch" placeholder="Search by client, role, quote…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+          <span style="color:var(--gray); font-size:12.5px;">Drag rows by the ⠿ handle to reorder</span>
+        </div>
+        <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+          <span><span data-bulk-count>0</span> selected</span>
+          <button type="button" class="btn danger" data-bulk-action="delete" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th style="width:26px;"><input type="checkbox" id="selectAll"></th><th></th><th>Photo</th><th>Client</th><th>Quote</th><th>Rating</th><th></th></tr></thead>
+          <tbody>
+          <% testimonials.forEach(t => { %>
+            <tr data-row-id="<%= t.id %>">
+              <td><input type="checkbox" data-row-id="<%= t.id %>"></td>
+              <td class="drag-handle" style="cursor:grab; color:var(--gray);">⠿</td>
+              <td>
+                <% if (t.avatar_url) { %>
+                  <img src="<%= t.avatar_url %>" alt="<%= t.client_name %>" style="width:44px; height:44px; object-fit:cover; border-radius:50%; border:1px solid var(--line);">
+                <% } else { %>
+                  <span style="display:inline-flex; width:44px; height:44px; align-items:center; justify-content:center; background:var(--sky); border-radius:50%; color:var(--gray); font-size:16px; font-weight:700;"><%= t.client_name.charAt(0) %></span>
+                <% } %>
+              </td>
+              <td><%= t.client_name %><br><span style="color:var(--gray); font-size:12.5px;"><%= t.client_role %></span></td>
+              <td style="max-width:340px; color:var(--gray); font-size:13.5px;">"<%= t.quote %>"</td>
+              <td><%= '★'.repeat(t.rating) %></td>
+              <td class="row-actions">
+                <a href="/admin/testimonials/<%= t.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/testimonials/<%= t.id %>/duplicate" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Duplicate</button>
+                </form>
+                <form action="/admin/testimonials/<%= t.id %>/delete" method="POST" onsubmit="return confirm('Delete this testimonial?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+<script src="/admin/public/admin-list.js"></script>
+<script>
+  AdminList.init({
+    searchInputId: 'adminSearch',
+    tableId: 'adminTable',
+    selectAllId: 'selectAll',
+    bulkBarId: 'bulkBar',
+    bulkUrl: '/admin/testimonials/bulk',
+    reorderUrl: '/admin/testimonials/reorder',
+    csrfToken: '<%= csrfToken %>'
+  });
+</script>
+</body>
+</html>

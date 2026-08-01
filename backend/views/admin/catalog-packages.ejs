@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= technology.name %> Packages — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= technology.name %> — Packages</h1>
+        <p><%= category.name %> → <%= technology.name %>. Add one package per tier: Basic, Business, Premium.</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <a href="/admin/catalog/<%= category.id %>/technologies" class="btn secondary">← Back to Services</a>
+        <% if (packages.length < 3) { %>
+          <a href="/admin/catalog/<%= category.id %>/technologies/<%= technology.id %>/packages/new" class="btn">+ Add Package</a>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="panel">
+      <% if (packages.length === 0) { %>
+        <div class="empty-state">No packages yet. Click "Add Package" to create Basic, Business, or Premium.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Tier</th><th>Name</th><th>Price</th><th>Delivery</th><th>Popular</th><th></th></tr></thead>
+          <tbody>
+          <% packages.forEach(p => { %>
+            <tr>
+              <td><span class="tag-pill"><%= p.tier %></span></td>
+              <td><%= p.name %></td>
+              <td>₹<%= Number(p.price).toLocaleString('en-IN') %> <span style="color:var(--gray); font-size:12px;"><%= p.price_suffix %></span></td>
+              <td><%= p.delivery_time %></td>
+              <td><%= p.is_popular ? '⭐ Yes' : '—' %></td>
+              <td class="row-actions">
+                <a href="/admin/catalog/<%= category.id %>/technologies/<%= technology.id %>/packages/<%= p.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/catalog/<%= category.id %>/technologies/<%= technology.id %>/packages/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Delete this package?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

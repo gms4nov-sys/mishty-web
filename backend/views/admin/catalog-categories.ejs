@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Catalog — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Service Catalog</h1>
+        <p>Top-level categories shown on the Services page. Each category holds its own services and packages.</p>
+      </div>
+      <a href="/admin/catalog/new" class="btn">+ Add Category</a>
+    </div>
+
+    <div class="panel">
+      <% if (categories.length === 0) { %>
+        <div class="empty-state">No categories yet. Click "Add Category" to create one.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Icon</th><th>Category</th><th>Services</th><th>URL</th><th></th></tr></thead>
+          <tbody>
+          <% categories.forEach(c => { %>
+            <tr>
+              <td style="font-size:20px;"><%= c.icon %></td>
+              <td><%= c.name %></td>
+              <td><%= c.tech_count %></td>
+              <td style="color:var(--gray); font-size:12.5px;"><code>/services/<%= c.slug %></code></td>
+              <td class="row-actions">
+                <a href="/admin/catalog/<%= c.id %>/technologies" class="btn secondary">Manage Services</a>
+                <a href="/admin/catalog/<%= c.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/catalog/<%= c.id %>/delete" method="POST" onsubmit="return confirm('Delete this category and everything inside it (services + packages)?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

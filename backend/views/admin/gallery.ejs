@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'gallery' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Gallery</h1>
+        <p>Manage the portfolio projects shown on your website</p>
+      </div>
+      <a href="/admin/gallery/new" class="btn">+ Add Project</a>
+    </div>
+
+    <div class="panel">
+      <% if (items.length === 0) { %>
+        <div class="empty-state">No gallery items yet. Click "Add Project" to create one.</div>
+      <% } else { %>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px;">
+          <input type="text" id="adminSearch" placeholder="Search by title, category, description…" style="flex:1; max-width:340px; padding:8px 12px; border:1px solid var(--line); border-radius:8px;">
+          <span style="color:var(--gray); font-size:12.5px;">Drag rows by the ⠿ handle to reorder</span>
+        </div>
+        <div id="bulkBar" style="display:none; align-items:center; gap:10px; background:#EEF4FF; border:1px solid #C7DBFB; border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+          <span><span data-bulk-count>0</span> selected</span>
+          <button type="button" class="btn danger" data-bulk-action="delete" style="padding:5px 12px; font-size:12.5px;">Delete Selected</button>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th style="width:26px;"><input type="checkbox" id="selectAll"></th><th></th><th>Image</th><th>Category</th><th>Title</th><th>Description</th><th></th></tr></thead>
+          <tbody>
+          <% items.forEach(it => { %>
+            <tr data-row-id="<%= it.id %>">
+              <td><input type="checkbox" data-row-id="<%= it.id %>"></td>
+              <td class="drag-handle" style="cursor:grab; color:var(--gray);">⠿</td>
+              <td>
+                <% if (it.image_url) { %>
+                  <img src="<%= it.image_url %>" alt="<%= it.title %>" style="width:56px; height:56px; object-fit:cover; border-radius:6px; border:1px solid var(--line);">
+                <% } else { %>
+                  <span style="display:inline-flex; width:56px; height:56px; align-items:center; justify-content:center; background:var(--sky); border-radius:6px; color:var(--gray); font-size:11px;">No image</span>
+                <% } %>
+              </td>
+              <td><span class="tag-pill"><%= it.category_label %></span></td>
+              <td><%= it.title %></td>
+              <td style="max-width:340px;"><%= it.description %></td>
+              <td class="row-actions">
+                <a href="/admin/gallery/<%= it.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/gallery/<%= it.id %>/duplicate" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary">Duplicate</button>
+                </form>
+                <form action="/admin/gallery/<%= it.id %>/delete" method="POST" onsubmit="return confirm('Delete this project?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+<script src="/admin/public/admin-list.js"></script>
+<script>
+  AdminList.init({
+    searchInputId: 'adminSearch',
+    tableId: 'adminTable',
+    selectAllId: 'selectAll',
+    bulkBarId: 'bulkBar',
+    bulkUrl: '/admin/gallery/bulk',
+    reorderUrl: '/admin/gallery/reorder',
+    csrfToken: '<%= csrfToken %>'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= category ? 'Edit' : 'Add' %> Category — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'catalog' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1><%= category ? 'Edit Category' : 'Add Category' %></h1>
+        <p>Shown as a card on the main Services page.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form action="<%= category ? '/admin/catalog/' + category.id : '/admin/catalog' %>" method="POST" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label>Category name (e.g. "Website Development")</label>
+          <input type="text" name="name" value="<%= category ? category.name : '' %>" required>
+          <% if (category) { %>
+            <div style="color:var(--gray); font-size:12.5px; margin-top:4px;">Page URL: <code>/services/<%= category.slug %></code></div>
+          <% } %>
+        </div>
+        <div class="field">
+          <label>Icon (a single emoji, e.g. 🌐 🛒 📈 — used when no cover image is set)</label>
+          <input type="text" name="icon" value="<%= category ? category.icon : '🧩' %>" maxlength="4">
+        </div>
+        <div class="field">
+          <label>Description (short line shown on the category card)</label>
+          <textarea name="description" rows="3"><%= category ? category.description : '' %></textarea>
+        </div>
+
+        <h3 style="margin:20px 0 12px;">Images</h3>
+        <div class="field">
+          <label>Cover image (desktop)</label>
+          <% if (category && category.cover_image) { %><div style="margin-bottom:8px;"><img src="<%= category.cover_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="cover_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Mobile image</label>
+          <% if (category && category.mobile_image) { %><div style="margin-bottom:8px;"><img src="<%= category.mobile_image %>" style="max-height:100px; border-radius:8px; border:1px solid var(--line);"></div><% } %>
+          <input type="file" name="mobile_image" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Image alt text</label>
+          <input type="text" name="image_alt" value="<%= category ? category.image_alt : '' %>">
+        </div>
+        <div style="color:var(--gray); font-size:12.5px; margin:-8px 0 16px;">Leave image fields empty to keep the current image. If no cover image is set, the emoji icon is shown instead.</div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" name="is_featured" id="is_featured" value="1" <%= category && category.is_featured ? 'checked' : '' %>>
+          <label for="is_featured" style="margin:0;">Featured category (highlighted on the homepage / services page)</label>
+        </div>
+
+        <h3 style="margin:20px 0 12px;">SEO</h3>
+        <div class="field"><label>SEO Title</label><input type="text" name="seo_title" value="<%= category ? category.seo_title : '' %>"></div>
+        <div class="field"><label>SEO Description</label><textarea name="seo_description" rows="2"><%= category ? category.seo_description : '' %></textarea></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn"><%= category ? 'Save Changes' : 'Add Category' %></button>
+          <a href="/admin/catalog" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

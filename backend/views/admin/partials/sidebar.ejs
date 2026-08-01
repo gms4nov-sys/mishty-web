@@ -1,0 +1,37 @@
+<div class="sidebar">
+  <div class="brand">Mishty<span>Web</span> <div style="font-size:11px; font-weight:500; color:#8FA6C9; margin-top:2px;">Admin Panel</div></div>
+  <nav>
+    <a href="/admin" class="<%= active === 'dashboard' ? 'active' : '' %>">📊 Dashboard</a>
+    <div style="margin:14px 0 4px; padding:0 16px; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:#5E7AA3;">Website CMS</div>
+    <a href="/admin/hero-slides" class="<%= active === 'hero-slides' ? 'active' : '' %>">🎬 Hero Slider</a>
+    <a href="/admin/catalog" class="<%= active === 'catalog' ? 'active' : '' %>">🗂 Categories &amp; Services</a>
+    <a href="/admin/gallery" class="<%= active === 'gallery' ? 'active' : '' %>">🖼 Gallery</a>
+    <a href="/admin/blog" class="<%= active === 'blog' ? 'active' : '' %>">📝 Blog</a>
+    <a href="/admin/testimonials" class="<%= active === 'testimonials' ? 'active' : '' %>">⭐ Testimonials</a>
+    <a href="/admin/client-logos" class="<%= active === 'client-logos' ? 'active' : '' %>">🏢 Client Logos</a>
+    <a href="/admin/faqs" class="<%= active === 'faqs' ? 'active' : '' %>">❓ FAQs</a>
+    <a href="/admin/pages" class="<%= active === 'pages' ? 'active' : '' %>">📄 Pages</a>
+    <a href="/admin/nav-items" class="<%= active === 'nav-items' ? 'active' : '' %>">🧭 Navigation</a>
+    <% if (typeof currentAdminRole === 'undefined' || currentAdminRole === 'admin') { %>
+    <a href="/admin/settings" class="<%= active === 'settings' ? 'active' : '' %>">⚙ Contact, Footer &amp; SEO Settings</a>
+    <% } %>
+    <div style="margin:14px 0 4px; padding:0 16px; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:#5E7AA3;">Leads</div>
+    <a href="/admin/enquiries" class="<%= active === 'enquiries' ? 'active' : '' %>">📥 Enquiries</a>
+    <a href="/admin/messages" class="<%= active === 'messages' ? 'active' : '' %>">✉ Messages</a>
+    <% if (typeof currentAdminRole === 'undefined' || currentAdminRole === 'admin') { %>
+    <div style="margin:14px 0 4px; padding:0 16px; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:#5E7AA3;">Team</div>
+    <a href="/admin/users" class="<%= active === 'users' ? 'active' : '' %>">👤 Admin Users</a>
+    <% } %>
+    <a href="/admin/account" class="<%= active === 'account' ? 'active' : '' %>">🙋 My Account</a>
+    <a href="/" target="_blank">🌐 View Site</a>
+  </nav>
+  <div class="foot">
+    Logged in as <strong><%= typeof username !== 'undefined' ? username : '' %></strong>
+    <% if (typeof currentAdminRole !== 'undefined' && currentAdminRole) { %>
+      <div style="font-size:11px; color:#8FA6C9;"><%= currentAdminRole === 'admin' ? 'Admin' : 'Editor' %></div>
+    <% } %>
+    <form action="/admin/logout" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit">Log out</button>
+    </form>
+  </div>
+</div>

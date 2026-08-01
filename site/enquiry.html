@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Get Started — Request a Free Quote | Mishty Web</title>
+<meta name="description" content="Tell us about your project and get a free, no-obligation quote from Mishty Web.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .pay-btn{display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; font-weight:700; padding:13px 22px; border-radius:8px; text-decoration:none; font-size:14.5px; margin-top:6px;}
+  .pay-btn:hover{opacity:0.92;}
+  .pay-hint{color:var(--gray); font-size:12.5px; margin-top:8px;}
+  .selected-banner{background:var(--sky); border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin-bottom:24px; font-size:14.5px; color:var(--navy);}
+  .selected-banner strong{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="contact-info">
+      <span>📞 <a href="tel:+91-XXXXXXXXXX" id="topbarPhone" style="color:inherit; text-decoration:none;">+91-XXXXXXXXXX</a></span>
+      <span>✉ <a href="mailto:hello@mishtyweb.com" id="topbarEmail" style="color:inherit; text-decoration:none;">hello@mishtyweb.com</a></span>
+    </div>
+    <div class="badge" id="topbarAddress">Based in Khargone, Madhya Pradesh</div>
+  </div>
+</div>
+
+<header>
+  <nav>
+    <a href="/index.html" class="logo" id="siteLogoLink"><img id="siteLogoImg" src="" alt="Logo" style="display:none; height:34px; vertical-align:middle;"><span id="siteLogoText">Mishty<span>Web</span></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/blog.html">Blog</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <a href="/contact.html" class="navcta">Get Free Consultation</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Get started</span>
+    <h1 id="enquiryHeading">Tell us about your project</h1>
+    <p>Fill this quick form and we'll get back with pricing and next steps — no obligation.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="breadcrumb-nav" id="breadcrumbNav" style="display:none;">
+      <a href="/services.html">Services</a>
+      <span class="sep">/</span>
+      <a href="#" id="crumbCategory">…</a>
+      <span class="sep">/</span>
+      <a href="#" id="crumbTech">…</a>
+      <span class="sep">/</span>
+      <span class="current" id="crumbPkg">…</span>
+    </div>
+
+    <div class="contact-grid">
+      <div>
+        <div id="readonlySummary" class="readonly-summary" style="display:none;">
+          <h3>Your selection</h3>
+          <div class="readonly-grid">
+            <div class="readonly-item"><div class="lbl">Category</div><div class="val" id="sumCategory">—</div></div>
+            <div class="readonly-item"><div class="lbl">Service / Technology</div><div class="val" id="sumTechnology">—</div></div>
+            <div class="readonly-item"><div class="lbl">Package</div><div class="val" id="sumPackage">—</div></div>
+            <div class="readonly-item"><div class="lbl">Price</div><div class="val" id="sumPrice">—</div></div>
+          </div>
+        </div>
+
+        <div id="selectedBanner" class="selected-banner" style="display:none;">
+          You selected: <strong id="selectedOptionText"></strong>
+        </div>
+
+        <form class="contact-form" id="enquiryForm">
+          <div style="position:absolute; left:-9999px;" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <input type="hidden" name="category_slug" id="f_category_slug">
+          <input type="hidden" name="category_name" id="f_category_name">
+          <input type="hidden" name="technology_slug" id="f_technology_slug">
+          <input type="hidden" name="technology_name" id="f_technology_name">
+          <input type="hidden" name="package_tier" id="f_package_tier">
+          <input type="hidden" name="package_name" id="f_package_name">
+          <input type="hidden" name="price" id="f_price">
+          <input type="hidden" name="price_suffix" id="f_price_suffix">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="full_name">Full name</label>
+              <input type="text" id="full_name" name="full_name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+91" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" placeholder="you@company.com" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company_name">Company name (optional)</label>
+              <input type="text" id="company_name" name="company_name" placeholder="Your business name">
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input type="text" id="country" name="country" placeholder="India" value="India">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="budget">Approximate budget</label>
+              <select id="budget" name="budget">
+                <option value="">Prefer not to say</option>
+                <option value="Under ₹10,000">Under ₹10,000</option>
+                <option value="₹10,000 – ₹25,000">₹10,000 – ₹25,000</option>
+                <option value="₹25,000 – ₹50,000">₹25,000 – ₹50,000</option>
+                <option value="₹50,000 – ₹1,00,000">₹50,000 – ₹1,00,000</option>
+                <option value="Above ₹1,00,000">Above ₹1,00,000</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="requirements">Project requirements</label>
+              <textarea id="requirements" name="requirements" placeholder="Tell us a bit more about what you need"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="attachment">Attach a file (optional — brief, reference, logo, etc.)</label>
+              <input type="file" id="attachment" name="attachment">
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" id="submitBtn">Submit Enquiry</button>
+          <p class="form-status" style="display:none; margin-top:14px; color:#2BB673; font-size:14px; font-weight:600;">Thanks! We'll get back to you shortly.</p>
+          <p class="form-error" style="display:none; margin-top:14px; color:#C43E1C; font-size:14px; font-weight:600;">Something went wrong — please try again or email us directly.</p>
+        </form>
+      </div>
+
+      <div>
+        <div class="contact-info-card" id="paymentInfoCard" style="display:none;">
+          <h3>Ready to pay an advance?</h3>
+          <p style="color:var(--gray); font-size:13.5px; margin-bottom:16px;">You can also pay us directly using the details below — no need to wait for us to reply first. This is your "Continue to Checkout" option.</p>
+
+          <a href="#" id="payUpiButton" class="pay-btn" style="display:none;" target="_blank" rel="noopener">📲 Pay via UPI App</a>
+          <div class="pay-hint" id="payUpiHintRow" style="display:none;">Opens your UPI app (GPay / PhonePe / Paytm) on mobile. On desktop, use the UPI ID below instead.</div>
+
+          <div class="contact-row" id="paymentUpiRow" style="display:none; margin-top:16px;">
+            <div class="ic">💳</div>
+            <div><div class="lbl">UPI ID</div><div class="val" id="paymentUpiVal"></div></div>
+          </div>
+          <div class="contact-row" id="paymentBankRow" style="display:none;">
+            <div class="ic">🏦</div>
+            <div><div class="lbl">Bank Transfer</div><div class="val" id="paymentBankVal"></div></div>
+          </div>
+          <div class="contact-row" id="paymentNoteRow" style="display:none;">
+            <div class="ic">📝</div>
+            <div><div class="lbl">Note</div><div class="val" id="paymentNoteVal"></div></div>
+          </div>
+          <div id="paymentQrRow" style="display:none; margin-top:10px;">
+            <img id="paymentQrImg" src="" alt="Payment QR code" style="max-width:160px; border-radius:8px; border:1px solid var(--line);">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function(){
+    const parts = window.location.pathname.split('/').filter(Boolean); // ['services', cat, tech, pkg] when on the pretty URL
+    const isCatalogFlow = parts[0] === 'services' && parts.length >= 4;
+    const legacyParams = new URLSearchParams(window.location.search);
+
+    if (isCatalogFlow) {
+      const categorySlug = parts[1], techSlug = parts[2], pkgTier = parts[3];
+      fetch(`/api/catalog/${encodeURIComponent(categorySlug)}/${encodeURIComponent(techSlug)}/${encodeURIComponent(pkgTier)}`)
+        .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+        .then(({ category, technology, package: pkg }) => {
+          document.getElementById('breadcrumbNav').style.display = 'flex';
+          document.getElementById('crumbCategory').textContent = category.name;
+          document.getElementById('crumbCategory').href = '/services/' + category.slug;
+          document.getElementById('crumbTech').textContent = technology.name;
+          document.getElementById('crumbTech').href = '/services/' + category.slug + '/' + technology.slug;
+          document.getElementById('crumbPkg').textContent = pkg.name;
+
+          document.getElementById('enquiryHeading').textContent = 'Get started with ' + pkg.name;
+          document.title = 'Enquiry — ' + pkg.name + ' | Mishty Web';
+
+          document.getElementById('readonlySummary').style.display = 'block';
+          document.getElementById('sumCategory').textContent = category.name;
+          document.getElementById('sumTechnology').textContent = technology.name;
+          document.getElementById('sumPackage').textContent = pkg.name;
+          document.getElementById('sumPrice').textContent = '₹' + Number(pkg.price).toLocaleString('en-IN') + ' ' + (pkg.price_suffix || '');
+
+          document.getElementById('f_category_slug').value = category.slug;
+          document.getElementById('f_category_name').value = category.name;
+          document.getElementById('f_technology_slug').value = technology.slug;
+          document.getElementById('f_technology_name').value = technology.name;
+          document.getElementById('f_package_tier').value = pkg.tier;
+          document.getElementById('f_package_name').value = pkg.name;
+          document.getElementById('f_price').value = pkg.price;
+          document.getElementById('f_price_suffix').value = pkg.price_suffix;
+
+          document.getElementById('requirements').value = "I'm interested in: " + pkg.name + ' (' + technology.name + ')';
+        })
+        .catch(() => {
+          document.getElementById('enquiryHeading').textContent = 'Tell us about your project';
+        });
+    } else {
+      // Legacy flow: ?service=X&option=Y links from older pages
+      const service = legacyParams.get('service');
+      const option = legacyParams.get('option');
+      if (option || service) {
+        document.getElementById('selectedBanner').style.display = 'block';
+        document.getElementById('selectedOptionText').textContent = option ? (option + (service ? ' (' + service + ')' : '')) : service;
+        document.getElementById('enquiryHeading').textContent = 'Get started with: ' + (option || service);
+        document.getElementById('requirements').value = "I'm interested in: " + (option || service);
+        document.getElementById('f_category_name').value = service || '';
+        document.getElementById('f_technology_name').value = option || '';
+      }
+    }
+
+    document.getElementById('enquiryForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('/api/enquiry', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.ok) {
+          const qs = new URLSearchParams({
+            name: document.getElementById('full_name').value,
+            pkg: document.getElementById('f_package_name').value || ''
+          });
+          window.location.href = '/thank-you?' + qs.toString();
+        } else {
+          throw new Error(data.error || 'Failed');
+        }
+      } catch (err) {
+        form.querySelector('.form-error').style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Enquiry';
+      }
+    });
+
+    // Payment / "Continue to Checkout" details from site settings
+    fetch('/api/settings').then(r => r.json()).then(s => {
+      const hasPayment = s.payment_upi || s.payment_bank_name || s.payment_qr_url;
+      if (!hasPayment) return;
+      document.getElementById('paymentInfoCard').style.display = 'block';
+      if (s.payment_upi) {
+        document.getElementById('paymentUpiRow').style.display = 'flex';
+        document.getElementById('paymentUpiVal').textContent = s.payment_upi;
+        document.getElementById('payUpiButton').style.display = 'inline-flex';
+        document.getElementById('payUpiButton').href = 'upi://pay?pa=' + encodeURIComponent(s.payment_upi) + '&pn=' + encodeURIComponent('Mishty Web');
+        document.getElementById('payUpiHintRow').style.display = 'block';
+      }
+      if (s.payment_bank_name) {
+        document.getElementById('paymentBankRow').style.display = 'flex';
+        document.getElementById('paymentBankVal').textContent = [s.payment_account_name, s.payment_bank_name, s.payment_account_number, s.payment_ifsc].filter(Boolean).join(' · ');
+      }
+      if (s.payment_note) {
+        document.getElementById('paymentNoteRow').style.display = 'flex';
+        document.getElementById('paymentNoteVal').textContent = s.payment_note;
+      }
+      if (s.payment_qr_url) {
+        document.getElementById('paymentQrRow').style.display = 'block';
+        document.getElementById('paymentQrImg').src = s.payment_qr_url;
+      }
+    }).catch(() => {});
+  })();
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo" id="footerLogo"><img id="footerLogoImg" src="" alt="Logo" style="display:none; height:30px; vertical-align:middle;"><span id="footerLogoText">Mishty<span>Web</span></span></div>
+        <p id="footerDescription">Full-service digital marketing and web development agency based in Khargone, Madhya Pradesh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about.html">About</a>
+        <a href="/services.html">Services</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="/services.html">Website Development</a>
+        <a href="/services.html">Digital Marketing</a>
+        <a href="/services.html">SEO</a>
+        <a href="/services.html">Branding & Design</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@mishtyweb.com" id="footerEmailLink">hello@mishtyweb.com</a>
+        <a href="/contact.html" id="footerAddressLink">Khargone, Madhya Pradesh</a>
+        <div id="footerSocialIcons" style="display:flex; gap:10px; margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopyright">© 2026 Mishty Web. All rights reserved.</span>
+      <span id="footerBottomAddress">Khargone, Madhya Pradesh, India</span>
+    </div>
+    <div id="footerLegalLinks" style="text-align:center; margin-top:14px; font-size:12.5px; opacity:0.7;"></div>
+  </div>
+</footer>
+
+<a href="#" id="callFloat" style="position:fixed; bottom:90px; right:24px; width:52px; height:52px; background:var(--blue,#1768D1); border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:22px; text-decoration:none; display:flex;">📞</a>
+<a href="#" id="whatsappFloat" target="_blank" rel="noopener" style="display:none; position:fixed; bottom:24px; right:24px; width:56px; height:56px; background:#25D366; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.25); z-index:999; font-size:28px; text-decoration:none;">💬</a>
+<script src="/site-settings.js"></script>
+</body>
+</html>

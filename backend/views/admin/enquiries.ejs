@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enquiries — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+<style>
+  .status-select{border:1.5px solid var(--line); border-radius:6px; padding:6px 8px; font-size:12.5px; font-family:inherit;}
+  .req-cell{max-width:220px; white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'enquiries' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Enquiries</h1>
+        <p>Leads submitted through the Service Catalog + Package Selection flow.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <% if (enquiries.length === 0) { %>
+        <div class="empty-state">No enquiries yet.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Customer</th><th>Selection</th><th>Price</th><th>Budget</th><th>Requirements</th><th>File</th><th>Status</th><th>Date</th><th></th></tr></thead>
+          <tbody>
+          <% enquiries.forEach(e => { %>
+            <tr>
+              <td>
+                <strong><%= e.full_name %></strong><br>
+                <span style="color:var(--gray); font-size:12.5px;"><%= e.email %></span><br>
+                <span style="color:var(--gray); font-size:12.5px;"><%= e.phone %></span>
+                <% if (e.company_name) { %><br><span style="color:var(--gray); font-size:12.5px;"><%= e.company_name %></span><% } %>
+              </td>
+              <td style="font-size:13px;">
+                <% if (e.category_name) { %>
+                  <span class="tag-pill"><%= e.category_name %></span><br>
+                  <span style="margin-top:4px; display:inline-block;"><%= e.technology_name %></span><br>
+                  <span style="color:var(--gray);"><%= e.package_name %></span>
+                <% } else { %>
+                  <span style="color:var(--gray);">—</span>
+                <% } %>
+              </td>
+              <td><% if (e.price) { %>₹<%= Number(e.price).toLocaleString('en-IN') %><br><span style="color:var(--gray); font-size:11.5px;"><%= e.price_suffix %></span><% } else { %>—<% } %></td>
+              <td style="font-size:13px;"><%= e.budget || '—' %></td>
+              <td class="req-cell"><%= e.requirements || '—' %></td>
+              <td>
+                <% if (e.file_url) { %><a href="<%= e.file_url %>" target="_blank" class="btn secondary" style="padding:6px 10px; font-size:12px;">View</a><% } else { %>—<% } %>
+              </td>
+              <td>
+                <form action="/admin/enquiries/<%= e.id %>/status" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <select name="status" class="status-select" onchange="this.form.submit()">
+                    <option value="new" <%= e.status === 'new' ? 'selected' : '' %>>New</option>
+                    <option value="contacted" <%= e.status === 'contacted' ? 'selected' : '' %>>Contacted</option>
+                    <option value="converted" <%= e.status === 'converted' ? 'selected' : '' %>>Converted</option>
+                    <option value="closed" <%= e.status === 'closed' ? 'selected' : '' %>>Closed</option>
+                  </select>
+                </form>
+              </td>
+              <td style="font-size:12.5px; color:var(--gray); white-space:nowrap;"><%= e.created_at %></td>
+              <td class="row-actions">
+                <form action="/admin/enquiries/<%= e.id %>/delete" method="POST" onsubmit="return confirm('Delete this enquiry?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+        <% if (pagination.totalPages > 1) { %>
+          <div class="pager" style="display:flex; align-items:center; gap:10px; justify-content:center; padding:16px 0 4px;">
+            <% if (pagination.page > 1) { %>
+              <a class="btn secondary" href="?page=<%= pagination.page - 1 %>">&larr; Prev</a>
+            <% } %>
+            <span style="color:var(--gray); font-size:13px;">Page <%= pagination.page %> of <%= pagination.totalPages %> (<%= pagination.totalCount %> total)</span>
+            <% if (pagination.page < pagination.totalPages) { %>
+              <a class="btn secondary" href="?page=<%= pagination.page + 1 %>">Next &rarr;</a>
+            <% } %>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

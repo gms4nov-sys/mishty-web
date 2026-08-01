@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigation — Mishty Web Admin</title>
+<link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <%- include('partials/sidebar', { active: 'nav-items' }) %>
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Navigation</h1>
+        <p>The core menu (Home, Services, Gallery, Blog, Contact...) is always shown. Add extra links below — they appear after the core menu in the header, or alongside quick links in the footer.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="page-head" style="padding:0 0 12px;">
+        <h2 style="margin:0; font-size:16px;">Header — extra links</h2>
+        <a href="/admin/nav-items/new?location=header" class="btn">+ Add Link</a>
+      </div>
+      <% if (headerItems.length === 0) { %>
+        <div class="empty-state">No extra header links yet.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Label</th><th>URL</th><th>New Tab</th><th>Status</th><th>Order</th><th></th></tr></thead>
+          <tbody>
+          <% headerItems.forEach((n, i) => { %>
+            <tr>
+              <td><%= n.label %></td>
+              <td style="max-width:260px; word-break:break-all;"><%= n.url %></td>
+              <td><%= n.open_new_tab ? 'Yes' : 'No' %></td>
+              <td><%= n.is_active ? '✅ Active' : '⏸ Hidden' %></td>
+              <td style="white-space:nowrap;">
+                <form action="/admin/nav-items/<%= n.id %>/move/up" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === 0 ? 'disabled' : '' %>>↑</button>
+                </form>
+                <form action="/admin/nav-items/<%= n.id %>/move/down" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === headerItems.length - 1 ? 'disabled' : '' %>>↓</button>
+                </form>
+              </td>
+              <td class="row-actions">
+                <a href="/admin/nav-items/<%= n.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/nav-items/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Delete this link?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <div class="panel">
+      <div class="page-head" style="padding:0 0 12px;">
+        <h2 style="margin:0; font-size:16px;">Footer — quick links</h2>
+        <a href="/admin/nav-items/new?location=footer" class="btn">+ Add Link</a>
+      </div>
+      <% if (footerItems.length === 0) { %>
+        <div class="empty-state">No extra footer links yet.</div>
+      <% } else { %>
+        <table>
+          <thead><tr><th>Label</th><th>URL</th><th>New Tab</th><th>Status</th><th>Order</th><th></th></tr></thead>
+          <tbody>
+          <% footerItems.forEach((n, i) => { %>
+            <tr>
+              <td><%= n.label %></td>
+              <td style="max-width:260px; word-break:break-all;"><%= n.url %></td>
+              <td><%= n.open_new_tab ? 'Yes' : 'No' %></td>
+              <td><%= n.is_active ? '✅ Active' : '⏸ Hidden' %></td>
+              <td style="white-space:nowrap;">
+                <form action="/admin/nav-items/<%= n.id %>/move/up" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === 0 ? 'disabled' : '' %>>↑</button>
+                </form>
+                <form action="/admin/nav-items/<%= n.id %>/move/down" method="POST" style="display:inline;"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn secondary" style="padding:4px 8px;" <%= i === footerItems.length - 1 ? 'disabled' : '' %>>↓</button>
+                </form>
+              </td>
+              <td class="row-actions">
+                <a href="/admin/nav-items/<%= n.id %>/edit" class="btn secondary">Edit</a>
+                <form action="/admin/nav-items/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Delete this link?');"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>
